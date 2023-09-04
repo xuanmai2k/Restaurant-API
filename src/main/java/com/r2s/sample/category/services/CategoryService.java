@@ -1,34 +1,23 @@
 package com.r2s.sample.category.services;
 
 import com.r2s.sample.category.entities.Category;
-import com.r2s.sample.category.repositories.CategoryRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Represents a category service
+ *
  * @author kyle
- * @since 2023-08-31
+ * @since 2023-09-02
  */
-@Service
-@Transactional
-public class CategoryService {
-
-    @Autowired
-    private CategoryRepository categoryRepository;
+public interface CategoryService {
 
     /**
      * This method is used to list all categories
      *
      * @return list of categories
      */
-    public List<Category> listAll() {
-        return categoryRepository.findAll();
-    }
+    public List<Category> listAll();
 
     /**
      * This method is used to get a category base on id
@@ -36,20 +25,14 @@ public class CategoryService {
      * @param id This is category id
      * @return category base on id
      */
-    public Optional<Category> get(long id) {
-
-        return categoryRepository.findById(id);
-    }
+    public Optional<Category> get(long id);
 
     /**
      * This method is used to create a category
      *
      * @param category This is a category
-     * @return a new category
      */
-    public Category save(Category category) {
-        return categoryRepository.save(category);
-    }
+    public void save(Category category);
 
 
     /**
@@ -57,7 +40,5 @@ public class CategoryService {
      *
      * @param category This is category
      */
-    public void delete(Category category) {
-        categoryRepository.delete(category);
-    }
+    public void delete(Category category);
 }

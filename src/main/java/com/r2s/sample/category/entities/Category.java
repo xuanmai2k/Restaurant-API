@@ -1,6 +1,7 @@
 package com.r2s.sample.category.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +11,7 @@ import lombok.Setter;
  * @author kyle
  * @since 2023-08-31
  */
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -22,6 +22,6 @@ public class Category {
     /**
      * Represents the category’s name.
      */
-    @Column(name = "category_name")
+    @Column(name = "category_name", nullable = false)
     private String categoryName;
 }
