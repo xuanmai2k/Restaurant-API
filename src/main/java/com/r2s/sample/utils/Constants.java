@@ -17,4 +17,27 @@ public class Constants {
     public static final String DATA_DELETE_FAILED = "data.delete.failed";
     public static final String SERVER_NAME = "server.name";
     //====== 2023/09/02 kyle END ======//
+
+    //====== 2023/09/05 kyle START ======//
+    /**
+     * Expire duration for JWT
+     */
+    public static final long EXPIRE_DURATION = 36000L;
+
+    public static final String ADMIN = "admin";
+
+    public static final String MOD = "mod";
+
+    public static final String USER = "user";
+
+    public static final String USERNAME_NOT_FOUND = "username.notFound";
+
+    public static final String AUTHORIZATION_TYPE = "Bearer";
+
+    public static final String USERNAME_EXIST = "username.exist";
+
+    public static final String EMAIL_EXIST = "email.exist";
+
+    public static final String ROLE_NOT_FOUND = "role.notFound";
+    //====== 2023/09/05 kyle END ======//
 }

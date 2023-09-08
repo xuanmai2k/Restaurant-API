@@ -1,0 +1,26 @@
+spring:
+  profiles:
+    active: dev #DEV or PRO environment
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+      show-sql: true
+
+#Request mapping
+user:
+  user: /users
+  login: login
+
+category: /category
+
+# JWT RSA key pair
+jwt:
+  private:
+    key: classpath:rsa.private.key
+  public:
+    key: classpath:rsa.public.key

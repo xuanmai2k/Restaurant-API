@@ -23,7 +23,6 @@ import java.util.*;
  * @author kyle
  * @since 2023-08-31
  */
-@CrossOrigin("${"+Constants.SERVER_NAME+"}")
 @RestController
 @RequestMapping("/categories")
 public class CategoryController {

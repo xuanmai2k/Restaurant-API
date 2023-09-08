@@ -8,7 +8,7 @@ import org.springframework.context.annotation.PropertySource;
  * @author kyle
  * @since 2023-08-31
  */
-@Configuration
-@PropertySource("classpath:messages.properties")
+//@Configuration
+//@PropertySource("classpath:messages.properties")
 public class PropertiesWithJavaConfig {
 }

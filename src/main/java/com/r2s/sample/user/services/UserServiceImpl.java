@@ -1,12 +1,11 @@
 package com.r2s.sample.user.services;
 
-import com.r2s.sample.category.entities.Category;
-import com.r2s.sample.category.repositories.CategoryRepository;
 import com.r2s.sample.user.entities.User;
 import com.r2s.sample.user.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +25,11 @@ public class UserServiceImpl implements UserService {
      */
     @Autowired
     private UserRepository userRepository;
+
+    //====== ADD 2023/09/05 kyle START ======//
+    @Autowired
+    private ModelMapper modelMapper;
+    //====== ADD 2023/09/05 kyle END ======//
 
     /**
      * This method is used to list all users
@@ -64,4 +68,27 @@ public class UserServiceImpl implements UserService {
     public void delete(User user) {
         userRepository.delete(user);
     }
+
+    //====== ADD 2023/09/05 kyle START ======//
+    /**
+     * This method is used to get user details service
+     *
+     * @param username This is username
+     * @return user This is user
+     */
+    @Override
+    public Optional<User> getUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
+    public Boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public Boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+    //====== ADD 2023/09/05 kyle END ======//
 }

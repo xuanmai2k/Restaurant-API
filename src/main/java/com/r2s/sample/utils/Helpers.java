@@ -1,7 +1,6 @@
 package com.r2s.sample.utils;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
 
 import java.security.SecureRandom;
 

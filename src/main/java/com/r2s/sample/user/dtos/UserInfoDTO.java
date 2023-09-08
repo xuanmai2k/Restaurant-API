@@ -31,7 +31,7 @@ public class UserInfoDTO {
     /**
      * Represents the email address
      */
-    private String emailId;
+    private String email;
 
     /**
      * Represent the city

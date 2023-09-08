@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
+
 /**
  * This class is used to register a user
  *
@@ -31,10 +33,15 @@ public class RegisterDTO {
     /**
      * Represents the email address
      */
-    private String emailId;
+    private String email;
 
     /**
      * Represents the city
      */
     private String city;
+
+    /**
+     * List of roles
+     */
+    Set<String> roles;
 }

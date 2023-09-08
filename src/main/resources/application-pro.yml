@@ -1,0 +1,15 @@
+server:
+  port: 8081
+
+db:
+  port: 3306
+  name: r2s_sample_db
+  endpoint: 45.117.170.206
+  username: r2s_sample_dev
+  password: Abc@3579
+
+spring:
+  datasource:
+    url: jdbc:mysql://${db.endpoint}:${db.port}/${db.name}
+    username: ${db.username}
+    password: ${db.password}
