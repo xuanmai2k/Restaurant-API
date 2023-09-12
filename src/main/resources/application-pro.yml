@@ -3,10 +3,10 @@ server:
 
 db:
   port: 3306
-  name: r2s_sample_db
-  endpoint: 45.117.170.206
-  username: r2s_sample_dev
-  password: Abc@3579
+  name: sampledb_pro
+  endpoint:
+  username:
+  password:
 
 spring:
   datasource:
