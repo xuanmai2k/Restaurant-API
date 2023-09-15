@@ -76,10 +76,16 @@ public class SecurityConfig {
                 .permitAll());
 
         // Set up oauth2 resource server
-        http.httpBasic(Customizer.withDefaults());
+//        http.httpBasic(Customizer.withDefaults());
+//        http.oauth2ResourceServer(configure ->
+//                configure.jwt(jwtConfigurer ->
+//                        jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+
         http.oauth2ResourceServer(configure ->
                 configure.jwt(jwtConfigurer ->
-                        jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+                        jwtConfigurer.jwtAuthenticationConverter(new RolesClaimConverter(
+                                new JwtGrantedAuthoritiesConverter()
+                        ))));
 
         // Disable CSRF
         http.csrf(AbstractHttpConfigurer::disable);
@@ -112,16 +118,16 @@ public class SecurityConfig {
     }
 
     // Extract authorities from the roles claim
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        var jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-
-        var jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-        return jwtAuthenticationConverter;
-    }
+//    @Bean
+//    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+//        var jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+////        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+//        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+//
+//        var jwtAuthenticationConverter = new JwtAuthenticationConverter();
+//        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+//        return jwtAuthenticationConverter;
+//    }
 
     /**
      * Set password encoding schema

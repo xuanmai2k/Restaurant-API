@@ -24,3 +24,9 @@ jwt:
     key: classpath:rsa.private.key
   public:
     key: classpath:rsa.public.key
+  issuer: r2s.com.vn
+  role: roles
+  authorityPrefix: ROLE_
+  type: Bearer
+  header: Authorization
+  secret: eyJhbGciOiJIUzUxMiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY5NDczMDU3MiwiaWF0IjoxNjk0NzMwNTcyfQ.-dvh1CkowJgF7MpPH_P50HBV_yaJUCKGmjki1oZFX-eR7g4zwB_4z7a9WtLMoonoEAk258bw7Rt0WLGCMZ4CkA

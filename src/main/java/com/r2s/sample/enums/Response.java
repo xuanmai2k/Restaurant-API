@@ -12,31 +12,16 @@ public class Response {
 
     //====== ADD 2023/09/01 kyle START ======//
     @Getter
-    public static enum ResponseKey {
-        STATUS("status"),
-        DATA("data"),
-        MESSAGE("message");
-
-        private final String value;
-
-        private ResponseKey(String value) {
-            this.value = value;
-        }
-
+    public static enum Key {
+        STATUS;
     }
 
     @Getter
-    public static enum ResponseValue {
-        FAILURE("0"),
-        NOT_FOUND("0"),
-        SUCCESSFULLY("1"),
-        DUPLICATED("2");
-
-        private final String value;
-
-        private ResponseValue(String value) {
-            this.value = value;
-        }
+    public static enum Value {
+        FAILURE,
+        SUCCESSFULLY,
+        DUPLICATED,
+        NOT_FOUND;
     }
     //====== ADD 2023/09/01 kyle END ======//
 }

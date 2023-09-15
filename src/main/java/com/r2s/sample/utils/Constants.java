@@ -22,11 +22,11 @@ public class Constants {
     /**
      * Expire duration for JWT
      */
-    public static final long EXPIRE_DURATION = 36000L;
+    public static final int EXPIRE_DURATION = 36000;
 
     public static final String ADMIN = "admin";
 
-    public static final String MOD = "mod";
+    public static final String MOD = "moderator";
 
     public static final String USER = "user";
 

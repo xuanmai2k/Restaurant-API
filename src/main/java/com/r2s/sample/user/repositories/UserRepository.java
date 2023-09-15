@@ -1,6 +1,5 @@
 package com.r2s.sample.user.repositories;
 
-import com.r2s.sample.category.entities.Category;
 import com.r2s.sample.user.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

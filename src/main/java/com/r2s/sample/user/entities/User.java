@@ -5,12 +5,11 @@ import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents the user
@@ -43,7 +42,7 @@ public class User implements UserDetails {
     /**
      * Represents the email address
      */
-    @Column(name = "email", length = 50)
+    @Column(name = "email", length = 50, unique = true)
     private String email;
 
     /**
@@ -65,7 +64,7 @@ public class User implements UserDetails {
     private LocalDateTime modifiedAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(  name = "user_roles",
+    @JoinTable(  name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
@@ -74,7 +73,12 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        for (Role role : roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+
+        return authorities;
     }
 
     @Override
@@ -95,5 +99,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public void addRole(Role role) {
+        this.roles.add(role);
     }
 }

@@ -3,6 +3,7 @@ package com.r2s.sample.category.controllers;
 
 import com.r2s.sample.category.entities.Category;
 import com.r2s.sample.category.services.CategoryService;
+import com.r2s.sample.dtos.ResponseDTO;
 import com.r2s.sample.enums.Response;
 import com.r2s.sample.utils.Constants;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -36,6 +38,8 @@ public class CategoryController {
     @Autowired
     private MessageSource messageSource;
 
+    private ResponseDTO body = ResponseDTO.getInstance();
+
     /**
      * Logging in Spring Boot
      */
@@ -54,7 +58,6 @@ public class CategoryController {
      */
     @GetMapping
     public ResponseEntity<?> getAllCategories() {
-        Map<String, Object> jsonResponse = new LinkedHashMap<>();
         List<Category> listOfCategories = categoryService.listAll();
 
         // For testing
@@ -62,19 +65,13 @@ public class CategoryController {
 
         // Category is found
         if (!listOfCategories.isEmpty()) {
-            // Response
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.SUCCESSFULLY.getValue());
-            jsonResponse.put(Response.ResponseKey.DATA.getValue(), listOfCategories);
-
             // Successfully
-            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+            return new ResponseEntity<>(listOfCategories, HttpStatus.OK);
         }
 
         // Category is not found
-        jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.NOT_FOUND.getValue());
-        jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_NOT_FOUND));
-
-        return new ResponseEntity<>(jsonResponse, HttpStatus.NOT_FOUND);
+        body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -83,27 +80,23 @@ public class CategoryController {
      * @param category This is a category
      * @return a category is inserted into database
      */
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    @PreAuthorize(value = "isAuthenticated()")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_MODERATOR')")
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody Category category) {
-        Map<String, Object> jsonResponse = new LinkedHashMap<>();
         try {
             categoryService.save(category);
 
-            // Response
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.SUCCESSFULLY.getValue());
-            jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_SAVE_SUCCESSFULLY));
-
             // Successfully
-            return new ResponseEntity<>(jsonResponse, HttpStatus.CREATED);
+            body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+            return new ResponseEntity<>(body, HttpStatus.CREATED);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
             // Failed
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.FAILURE.getValue());
-            jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_SAVE_FAILED));
-
-            // Exception
-            return new ResponseEntity<>(jsonResponse, HttpStatus.EXPECTATION_FAILED);
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
         }
 
     }
@@ -116,24 +109,17 @@ public class CategoryController {
      */
     @GetMapping("{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable long id) {
-        Map<String, Object> jsonResponse = new LinkedHashMap<>();
         Optional<Category> category = categoryService.get(id);
 
         // Found
         if (category.isPresent()) {
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.SUCCESSFULLY.getValue());
-            jsonResponse.put(Response.ResponseKey.DATA.getValue(), category.get());
-
             // Successfully
-            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+            return new ResponseEntity<>(category.get(), HttpStatus.OK);
         }
 
         // Not found
-        jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.NOT_FOUND.getValue());
-        jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(),
-                messageSource.getMessage(Constants.DATA_ID_NOT_FOUND, new Object[] {id}, Locale.ENGLISH));
-
-        return new ResponseEntity<>(jsonResponse, HttpStatus.NOT_FOUND);
+        body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -145,7 +131,6 @@ public class CategoryController {
      */
     @PutMapping("{id}")
     public ResponseEntity<?> updateCategory(@PathVariable long id, @RequestBody Category category) {
-        Map<String, Object> jsonResponse = new LinkedHashMap<>();
         try {
             Optional<Category> updateCategory = categoryService.get(id);
 
@@ -157,29 +142,20 @@ public class CategoryController {
                 // Save category into database
                 categoryService.save(updateCategory.get());
 
-                // Response
-                jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.SUCCESSFULLY.getValue());
-                jsonResponse.put(Response.ResponseKey.DATA.getValue(), categoryService.get(id));
-
                 // Successfully
-                return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+                body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+                return new ResponseEntity<>(body, HttpStatus.OK);
             }
 
             // Not found
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.NOT_FOUND);
-            jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(),
-                    messageSource.getMessage(Constants.DATA_ID_NOT_FOUND, new Object[] {id}, Locale.ENGLISH));
-
-            return new ResponseEntity<>(jsonResponse, HttpStatus.NOT_FOUND);
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
             // Failed
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.FAILURE);
-            jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_SAVE_FAILED));
-
-            // Exception
-            return new ResponseEntity<>(jsonResponse, HttpStatus.EXPECTATION_FAILED);
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
         }
     }
 
@@ -191,7 +167,6 @@ public class CategoryController {
      */
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable long id) {
-        Map<String, Object> jsonResponse = new LinkedHashMap<>();
         try {
             Optional<Category> category = categoryService.get(id);
 
@@ -199,30 +174,20 @@ public class CategoryController {
             if (category.isPresent()) {
                 categoryService.delete(category.get());
 
-                // Response
-                jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.SUCCESSFULLY.getValue());
-                jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(),
-                        env.getProperty(Constants.DATA_DELETE_SUCCESSFULLY));
-
                 // Successfully
-                return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+                body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+                return new ResponseEntity<>(body, HttpStatus.OK);
             }
 
             // Not found
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.NOT_FOUND);
-            jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(),
-                    messageSource.getMessage(Constants.DATA_ID_NOT_FOUND, new Object[] {id}, Locale.ENGLISH));
-
-            return new ResponseEntity<>(jsonResponse, HttpStatus.NOT_FOUND);
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
             // Failed
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.FAILURE);
-            jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_DELETE_FAILED));
-
-            // Exception
-            return new ResponseEntity<>(jsonResponse, HttpStatus.EXPECTATION_FAILED);
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
         }
     }
 }

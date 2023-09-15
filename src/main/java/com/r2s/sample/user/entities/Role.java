@@ -1,6 +1,5 @@
 package com.r2s.sample.user.entities;
 
-import com.r2s.sample.user.models.ERole;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,15 +12,14 @@ import lombok.*;
 @Entity
 @Table(name = "roles")
 @Data
-@NoArgsConstructor
 @RequiredArgsConstructor
+@NoArgsConstructor
 public class Role {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
 
-  @Enumerated(EnumType.STRING)
-  @Column(length = 20)
+  @Column(nullable = false, length = 50, unique = true)
   @NonNull
-  private ERole name;
+  private String name;
 }

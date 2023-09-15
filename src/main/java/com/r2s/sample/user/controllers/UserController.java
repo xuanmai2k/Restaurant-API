@@ -1,5 +1,6 @@
 package com.r2s.sample.user.controllers;
 
+import com.r2s.sample.dtos.ResponseDTO;
 import com.r2s.sample.enums.Response;
 import com.r2s.sample.user.dtos.RegisterDTO;
 import com.r2s.sample.user.dtos.UserInfoDTO;
@@ -67,6 +68,8 @@ public class UserController {
     @Autowired
     private RoleRepository roleRepository;
 
+    private final ResponseDTO body = ResponseDTO.getInstance();
+
     /**
      * REST API methods for Retrieval operations
      *
@@ -74,7 +77,6 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
-        Map<String, Object> jsonResponse = new LinkedHashMap<>();
         List<User> listOfUsers = userService.listAll();
         List<UserInfoDTO> listOfUsersDTO = new ArrayList<>();
 
@@ -86,17 +88,12 @@ public class UserController {
             }
 
             // Successfully
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.SUCCESSFULLY.getValue());
-            jsonResponse.put(Response.ResponseKey.DATA.getValue(), listOfUsersDTO);
-
-            return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
+            return new ResponseEntity<>(listOfUsersDTO, HttpStatus.OK);
         }
 
         // Not found
-        jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.NOT_FOUND.getValue());
-        jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_NOT_FOUND));
-
-        return new  ResponseEntity<>(jsonResponse, HttpStatus.NOT_FOUND);
+        body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+        return new  ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -107,21 +104,17 @@ public class UserController {
      */
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody RegisterDTO registerDTO) {
-        Map<String, Object> jsonResponse = new LinkedHashMap<>();
         try {
             // Username is duplicated
             if (userService.existsByUsername(registerDTO.getUsername())) {
-                jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.DUPLICATED.getValue());
-                jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.USERNAME_EXIST));
-
-                return new ResponseEntity<>(jsonResponse, HttpStatus.BAD_REQUEST);
+                body.setResponse(Response.Key.STATUS, Response.Value.DUPLICATED);
+                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
             }
 
+            // Email is duplicated
             if (userService.existsByEmail(registerDTO.getEmail())) {
-                jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.DUPLICATED.getValue());
-                jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.EMAIL_EXIST));
-
-                return new ResponseEntity<>(jsonResponse, HttpStatus.BAD_REQUEST);
+                body.setResponse(Response.Key.STATUS, Response.Value.DUPLICATED);
+                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
             }
 
             // Convert DTO to an entity
@@ -137,44 +130,46 @@ public class UserController {
             userService.save(user);
 
             // Successfully
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.SUCCESSFULLY.getValue());
-            jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_SAVE_SUCCESSFULLY));
-
-            return new ResponseEntity<>(jsonResponse, HttpStatus.CREATED);
+            body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+            return new ResponseEntity<>(body, HttpStatus.CREATED);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
             // Failed
-            jsonResponse.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.FAILURE.getValue());
-            jsonResponse.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_SAVE_FAILED));
-
-            return new ResponseEntity<>(jsonResponse, HttpStatus.EXPECTATION_FAILED);
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
         }
     }
 
+    /**
+     * Get all roles
+     *
+     * @param registerDTO This information to sign up
+     * @return Set<Role> List of roles
+     */
     private Set<Role> getRoles(RegisterDTO registerDTO) {
         Set<Role> roles = new HashSet<>();
         Set<String> strRoles = registerDTO.getRoles();
 
         if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+            Role userRole = roleRepository.findByName(ERole.ROLE_USER.toString())
                     .orElseThrow(() -> new RuntimeException(env.getProperty(Constants.ROLE_NOT_FOUND)));
            roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case Constants.ADMIN -> {
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN.toString())
                                 .orElseThrow(() -> new RuntimeException(env.getProperty(Constants.ROLE_NOT_FOUND)));
                         roles.add(adminRole);
                     }
                     case Constants.MOD -> {
-                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
+                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR.toString())
                                 .orElseThrow(() -> new RuntimeException(env.getProperty(Constants.ROLE_NOT_FOUND)));
                         roles.add(modRole);
                     }
                     default -> {
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                        Role userRole = roleRepository.findByName(ERole.ROLE_USER.toString())
                                 .orElseThrow(() -> new RuntimeException(env.getProperty(Constants.ROLE_NOT_FOUND)));
                         roles.add(userRole);
                     }
@@ -194,7 +189,6 @@ public class UserController {
      */
     @PutMapping("{id}")
     public ResponseEntity<?> updateUserProfile(@PathVariable long id, @RequestBody UserInfoDTO userInfoDTO) {
-        Map<String, Object> jsonMap = new LinkedHashMap<>();
         try {
             Optional<User> userOptional = userService.get(id);
 
@@ -211,26 +205,20 @@ public class UserController {
                 userService.save(user);
 
                 // Successfully
-                jsonMap.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.SUCCESSFULLY.getValue());
-                jsonMap.put(Response.ResponseKey.DATA.getValue(), userService.get(id));
-
-                return new ResponseEntity<>(jsonMap, HttpStatus.OK);
+                body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+                return new ResponseEntity<>(body, HttpStatus.OK);
             }
 
             // Not found
-            jsonMap.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.NOT_FOUND.getValue());
-            jsonMap.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_NOT_FOUND));
-
-            return new ResponseEntity<>(jsonMap, HttpStatus.NOT_FOUND);
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
 
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
             // Exception
-            jsonMap.put(Response.ResponseKey.STATUS.getValue(), Response.ResponseValue.FAILURE.getValue());
-            jsonMap.put(Response.ResponseKey.MESSAGE.getValue(), env.getProperty(Constants.DATA_SAVE_FAILED));
-
-            return new ResponseEntity<>(jsonMap, HttpStatus.EXPECTATION_FAILED);
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
         }
     }
 }

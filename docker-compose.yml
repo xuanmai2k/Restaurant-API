@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  app:
+    image: r2s-sample-restapi
+    ports:
+      - 8081: 8081
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/sampledb_pro
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Toilatoi

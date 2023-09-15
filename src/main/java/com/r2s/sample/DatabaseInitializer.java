@@ -33,21 +33,21 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
     private void initRole(ERole eRole) {
         switch (eRole) {
             case ROLE_USER -> {
-                saveRole(ERole.ROLE_USER);
+                saveRole(ERole.ROLE_USER.toString());
             }
             case ROLE_MODERATOR -> {
-                saveRole(ERole.ROLE_MODERATOR);
+                saveRole(ERole.ROLE_MODERATOR.toString());
             }
             case ROLE_ADMIN -> {
-                saveRole(ERole.ROLE_ADMIN);
+                saveRole(ERole.ROLE_ADMIN.toString());
             }
         }
     }
 
-    private void saveRole(ERole eRole) {
-        Optional<Role> role = roleRepository.findByName(eRole);
+    private void saveRole(String name) {
+        Optional<Role> role = roleRepository.findByName(name);
         if (role.isEmpty()) {
-            Role userRole = new Role(eRole);
+            Role userRole = new Role(name);
             roleRepository.save(userRole);
         }
     }
