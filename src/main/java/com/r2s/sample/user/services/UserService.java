@@ -33,7 +33,7 @@ public interface UserService {
      *
      * @param user This is a user
      */
-    public void save(User user);
+    public User save(User user);
 
     /**
      * This method is used to delete a user by id

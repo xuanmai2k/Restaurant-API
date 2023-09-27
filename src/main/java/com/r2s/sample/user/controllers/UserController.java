@@ -92,9 +92,9 @@ public class UserController {
                 return new ResponseEntity<>(listOfUsersDTO, HttpStatus.OK);
             }
 
-            // Not found
+            // No content
             body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
-            return new  ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+            return new  ResponseEntity<>(body, HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
@@ -134,7 +134,7 @@ public class UserController {
 
             user.setRoles(getRoles(registerDTO));
 
-            // Create
+            // Save a user into db
             userService.save(user);
 
             // Successfully
@@ -209,12 +209,8 @@ public class UserController {
                 user.setMobileNo(userInfoDTO.getMobileNo());
                 user.setCity(userInfoDTO.getCity());
 
-                // Save
-                userService.save(user);
-
-                // Successfully
-                body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
-                return new ResponseEntity<>(body, HttpStatus.OK);
+                // Save successfully
+                return new ResponseEntity<>(userService.save(user), HttpStatus.OK);
             }
 
             // Not found

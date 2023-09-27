@@ -5,7 +5,6 @@ import com.r2s.sample.user.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,11 +24,6 @@ public class UserServiceImpl implements UserService {
      */
     @Autowired
     private UserRepository userRepository;
-
-    //====== ADD 2023/09/05 kyle START ======//
-    @Autowired
-    private ModelMapper modelMapper;
-    //====== ADD 2023/09/05 kyle END ======//
 
     /**
      * This method is used to list all users
@@ -55,8 +49,8 @@ public class UserServiceImpl implements UserService {
      *
      * @param user This is a user
      */
-    public void save(User user) {
-        userRepository.save(user);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
 

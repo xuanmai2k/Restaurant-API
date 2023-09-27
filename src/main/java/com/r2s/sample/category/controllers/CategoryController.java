@@ -59,9 +59,10 @@ public class CategoryController {
     public ResponseEntity<?> getAllCategories(@RequestParam(required = false) String categoryName) {
         try {
             List<Category> listOfCategories = new ArrayList<>();
+            // Get all
             if (categoryName == null) {
                 listOfCategories = categoryService.listAll();
-            } else {
+            } else { // Filter by category name
                 listOfCategories = categoryService.filterByName(categoryName);
             }
 
@@ -70,13 +71,12 @@ public class CategoryController {
 
             // Category is found
             if (!listOfCategories.isEmpty()) {
-                // Successfully
                 return new ResponseEntity<>(listOfCategories, HttpStatus.OK);
             }
 
-            // Category is not found
+            // No content
             body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
@@ -161,11 +161,11 @@ public class CategoryController {
                 _category.setCategoryName(category.getCategoryName());
 
                 // Save category into database
-                categoryService.save(_category);
+//                categoryService.save(_category);
 
-                // Successfully
-                body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
-                return new ResponseEntity<>(body, HttpStatus.OK);
+                // Save category into database Successfully
+//                body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+                return new ResponseEntity<>(categoryService.save(_category), HttpStatus.OK);
             }
 
             // Not found
@@ -189,20 +189,8 @@ public class CategoryController {
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable long id) {
         try {
-            Optional<Category> category = categoryService.get(id);
-
-            // Found
-            if (category.isPresent()) {
-                categoryService.delete(id);
-
-                // Successfully
-                body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
-                return new ResponseEntity<>(body, HttpStatus.OK);
-            }
-
-            // Not found
-            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+            categoryService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
