@@ -42,22 +42,33 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
+     * Get all categories containing name
+     *
+     * @param name This is category name
+     * @return List of categories
+     */
+    @Override
+    public List<Category> filterByName(String name) {
+        return categoryRepository.findByCategoryNameContaining(name);
+    }
+
+    /**
      * This method is used to create a category
      *
      * @param category This is a category
      */
     @Override
-    public void save(Category category) {
-        categoryRepository.save(category);
+    public Category save(Category category) {
+       return categoryRepository.save(category);
     }
 
 
     /**
      * This method is used to delete a category by id
      *
-     * @param category This is category
+     * @param id This is category id
      */
-    public void delete(Category category) {
-        categoryRepository.delete(category);
+    public void delete(long id) {
+        categoryRepository.deleteById(id);
     }
 }

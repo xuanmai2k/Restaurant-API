@@ -28,11 +28,19 @@ public interface CategoryService {
     public Optional<Category> get(long id);
 
     /**
+     * Find category by category name
+     *
+     * @param name This is category name
+     * @return List of categories
+     */
+    public List<Category> filterByName(String name);
+
+    /**
      * This method is used to create a category
      *
      * @param category This is a category
      */
-    public void save(Category category);
+    public Category save(Category category);
 
 
     /**
@@ -40,5 +48,5 @@ public interface CategoryService {
      *
      * @param category This is category
      */
-    public void delete(Category category);
+    public void delete(long id);
 }

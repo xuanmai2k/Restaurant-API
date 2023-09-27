@@ -1,6 +1,5 @@
 package com.r2s.sample.category.controllers;
 
-
 import com.r2s.sample.category.entities.Category;
 import com.r2s.sample.category.services.CategoryService;
 import com.r2s.sample.dtos.ResponseDTO;
@@ -26,7 +25,7 @@ import java.util.*;
  * @since 2023-08-31
  */
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("${category}")
 public class CategoryController {
 
     @Autowired
@@ -38,7 +37,7 @@ public class CategoryController {
     @Autowired
     private MessageSource messageSource;
 
-    private ResponseDTO body = ResponseDTO.getInstance();
+    private final ResponseDTO body = ResponseDTO.getInstance();
 
     /**
      * Logging in Spring Boot
@@ -57,21 +56,34 @@ public class CategoryController {
      * @return list all of categories
      */
     @GetMapping
-    public ResponseEntity<?> getAllCategories() {
-        List<Category> listOfCategories = categoryService.listAll();
+    public ResponseEntity<?> getAllCategories(@RequestParam(required = false) String categoryName) {
+        try {
+            List<Category> listOfCategories = new ArrayList<>();
+            if (categoryName == null) {
+                listOfCategories = categoryService.listAll();
+            } else {
+                listOfCategories = categoryService.filterByName(categoryName);
+            }
 
-        // For testing
-        logger.info("server name: " + env.getProperty(Constants.SERVER_NAME));
+            // For testing
+            logger.info("server name: " + env.getProperty(Constants.SERVER_NAME));
 
-        // Category is found
-        if (!listOfCategories.isEmpty()) {
-            // Successfully
-            return new ResponseEntity<>(listOfCategories, HttpStatus.OK);
+            // Category is found
+            if (!listOfCategories.isEmpty()) {
+                // Successfully
+                return new ResponseEntity<>(listOfCategories, HttpStatus.OK);
+            }
+
+            // Category is not found
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        // Category is not found
-        body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -96,7 +108,7 @@ public class CategoryController {
 
             // Failed
             body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
-            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -109,17 +121,25 @@ public class CategoryController {
      */
     @GetMapping("{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable long id) {
-        Optional<Category> category = categoryService.get(id);
+        try {
+            Optional<Category> category = categoryService.get(id);
 
-        // Found
-        if (category.isPresent()) {
-            // Successfully
-            return new ResponseEntity<>(category.get(), HttpStatus.OK);
+            // Found
+            if (category.isPresent()) {
+                // Successfully
+                return new ResponseEntity<>(category.get(), HttpStatus.OK);
+            }
+
+            // Not found
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        // Not found
-        body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
     /**
@@ -136,11 +156,12 @@ public class CategoryController {
 
             // Found
             if (updateCategory.isPresent()) {
+                Category _category = updateCategory.get();
                 // Update new category name
-                updateCategory.get().setCategoryName(category.getCategoryName());
+                _category.setCategoryName(category.getCategoryName());
 
                 // Save category into database
-                categoryService.save(updateCategory.get());
+                categoryService.save(_category);
 
                 // Successfully
                 body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
@@ -155,7 +176,7 @@ public class CategoryController {
 
             // Failed
             body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
-            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -172,7 +193,7 @@ public class CategoryController {
 
             // Found
             if (category.isPresent()) {
-                categoryService.delete(category.get());
+                categoryService.delete(id);
 
                 // Successfully
                 body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
@@ -187,7 +208,7 @@ public class CategoryController {
 
             // Failed
             body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
-            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

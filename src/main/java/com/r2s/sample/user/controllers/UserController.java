@@ -77,23 +77,31 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
-        List<User> listOfUsers = userService.listAll();
-        List<UserInfoDTO> listOfUsersDTO = new ArrayList<>();
+        try {
+            List<User> listOfUsers = userService.listAll();
+            List<UserInfoDTO> listOfUsersDTO = new ArrayList<>();
 
-        // Found
-        if (!listOfUsers.isEmpty()) {
-            //  To convert Entity to DTO
-            for (User user: listOfUsers) {
-                listOfUsersDTO.add(mapper.map(user, UserInfoDTO.class));
+            // Found
+            if (!listOfUsers.isEmpty()) {
+                //  To convert Entity to DTO
+                for (User user: listOfUsers) {
+                    listOfUsersDTO.add(mapper.map(user, UserInfoDTO.class));
+                }
+
+                // Successfully
+                return new ResponseEntity<>(listOfUsersDTO, HttpStatus.OK);
             }
 
-            // Successfully
-            return new ResponseEntity<>(listOfUsersDTO, HttpStatus.OK);
-        }
+            // Not found
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new  ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
 
-        // Not found
-        body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
-        return new  ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -137,7 +145,7 @@ public class UserController {
 
             // Failed
             body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
-            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -147,14 +155,14 @@ public class UserController {
      * @param registerDTO This information to sign up
      * @return Set<Role> List of roles
      */
-    private Set<Role> getRoles(RegisterDTO registerDTO) {
+    private Set<Role> getRoles(RegisterDTO registerDTO) throws Exception{
         Set<Role> roles = new HashSet<>();
         Set<String> strRoles = registerDTO.getRoles();
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER.toString())
                     .orElseThrow(() -> new RuntimeException(env.getProperty(Constants.ROLE_NOT_FOUND)));
-           roles.add(userRole);
+            roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
@@ -218,7 +226,7 @@ public class UserController {
 
             // Exception
             body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
-            return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
