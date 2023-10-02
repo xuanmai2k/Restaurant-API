@@ -8,10 +8,10 @@
 		<version>3.1.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.r2s.sample</groupId>
-	<artifactId>sample</artifactId>
+	<groupId>com.r2s.mobilestore</groupId>
+	<artifactId>mobilestore</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>sample</name>
+	<name>mobilestore</name>
 	<description>R2S Sample project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
@@ -96,5 +96,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
