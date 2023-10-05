@@ -27,7 +27,7 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String fullName;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -63,6 +63,15 @@ public class User implements UserDetails {
         }
 
         return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.fullName;
+    }
+
+    public void setUsername(String fullName) {
+        this.fullName = fullName;
     }
 
     @Override

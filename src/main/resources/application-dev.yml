@@ -16,3 +16,18 @@ spring:
     username: ${db.username}
     password: ${db.password}
 
+# ADD 2023/10/05 KhanhBD START
+  mail:
+    host: smtp.gmail.com
+    username: mobilestorer2s@gmail.com
+    password: qafj jiyp kaof fyde
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: "*"
+# ADD 2023/10/05 KhanhBD END

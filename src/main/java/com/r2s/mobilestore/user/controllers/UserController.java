@@ -2,12 +2,14 @@ package com.r2s.mobilestore.user.controllers;
 
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
+import com.r2s.mobilestore.user.dtos.EmailDTO;
 import com.r2s.mobilestore.user.dtos.RegisterDTO;
-import com.r2s.mobilestore.user.dtos.UserInfoDTO;
 import com.r2s.mobilestore.user.entities.Role;
 import com.r2s.mobilestore.user.entities.User;
 import com.r2s.mobilestore.user.models.ERole;
 import com.r2s.mobilestore.user.repositories.RoleRepository;
+import com.r2s.mobilestore.user.services.EmailService;
+import com.r2s.mobilestore.user.services.OTPService;
 import com.r2s.mobilestore.user.services.UserService;
 import com.r2s.mobilestore.utils.Constants;
 import org.modelmapper.ModelMapper;
@@ -19,6 +21,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -26,8 +29,8 @@ import java.util.*;
 /**
  * Represents a user controller
  *
- * @author kyle
- * @since 2023-09-02
+ * @author KhanhBD
+ * @since 2023-10-03
  */
 @RestController
 @RequestMapping("${user.user}")
@@ -68,33 +71,40 @@ public class UserController {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private OTPService otpService;
+
     private final ResponseDTO body = ResponseDTO.getInstance();
 
     /**
-     * REST API methods for Retrieval operations
+     * Build send OTP when user register
      *
-     * @return list all of users
+     * @param emailDTO This is user email
+     * @return status send email
      */
-    @GetMapping
-    public ResponseEntity<?> getAllUsers() {
+    @PostMapping
+    @Transactional
+    public ResponseEntity<?> sendOTP(@RequestBody EmailDTO emailDTO) {
         try {
-            List<User> listOfUsers = userService.listAll();
-            List<UserInfoDTO> listOfUsersDTO = new ArrayList<>();
+            // cleanup Expired OTP
+            otpService.cleanupExpiredOTP();
 
-            // Found
-            if (!listOfUsers.isEmpty()) {
-                //  To convert Entity to DTO
-                for (User user: listOfUsers) {
-                    listOfUsersDTO.add(mapper.map(user, UserInfoDTO.class));
-                }
+            // Generate an OTP (One-Time Password)
+            String otp = otpService.createOrUpdateOTP(emailDTO.getEmail()).getOtpCode();
 
-                // Successfully
-                return new ResponseEntity<>(listOfUsersDTO, HttpStatus.OK);
-            }
+            // Send an email with the OTP
+            emailService.sendEmail(emailDTO.getEmail(),
+                    messageSource.getMessage(
+                            Constants.EMAIL_SUBJECT, null, Locale.ENGLISH),
+                    messageSource.getMessage(
+                            Constants.EMAIL_MESSAGE, new Object[] {otp}, Locale.ENGLISH));
 
-            // No content
-            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
-            return new  ResponseEntity<>(body, HttpStatus.NO_CONTENT);
+            // Successfully
+            body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+            return new ResponseEntity<>(body, HttpStatus.CREATED);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
@@ -105,23 +115,29 @@ public class UserController {
     }
 
     /**
-     * Build create user REST API
+     * Build create User when user verify email by otp code
      *
-     * @param registerDTO This is a user
-     * @return Response entity
+     * @param registerDTO This is a verifyDTO
+     * @return status register
      */
-    @PostMapping
+    @PostMapping("${user.create}")
+//    @Transactional
     public ResponseEntity<?> createUser(@RequestBody RegisterDTO registerDTO) {
         try {
-            // Username is duplicated
-            if (userService.existsByUsername(registerDTO.getUsername())) {
-                body.setResponse(Response.Key.STATUS, Response.Value.DUPLICATED);
+            // Email is duplicated
+            if (userService.existsByEmail(registerDTO.getEmail())) {
+                body.setResponse(Response.Key.STATUS,  messageSource.getMessage(
+                        Constants.EMAIL_EXIST, null, Locale.ENGLISH));
                 return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
             }
 
-            // Email is duplicated
-            if (userService.existsByEmail(registerDTO.getEmail())) {
-                body.setResponse(Response.Key.STATUS, Response.Value.DUPLICATED);
+
+            // Check OTP authentication code
+            boolean isOTPValid = otpService.isOTPValid(registerDTO.getEmail(), registerDTO.getOtpCode());
+
+            if (!isOTPValid) {
+                // The OTP code is invalid or has expired
+                body.setResponse(Response.Key.STATUS, Response.Value.INVALID_OTP);
                 return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
             }
 
@@ -136,10 +152,13 @@ public class UserController {
             roles.add(userRole);
             user.setRoles(roles);
 
+            // Delete OTP code after use (optional)
+            otpService.deleteOTP(registerDTO.getEmail());
+
             // Save a user into db
             userService.save(user);
 
-            // Successfully
+            // The user has been created successfully
             body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
             return new ResponseEntity<>(body, HttpStatus.CREATED);
         } catch (Exception ex) {
@@ -151,75 +170,20 @@ public class UserController {
         }
     }
 
-//    /**
-//     * Get all roles
-//     *
-//     * @param registerDTO This information to sign up
-//     * @return Set<Role> List of roles
-//     */
-//    private Set<Role> getRoles(RegisterDTO registerDTO) throws Exception{
-//        Set<Role> roles = new HashSet<>();
-//        Set<String> strRoles = registerDTO.getRoles();
-//
-//        if (strRoles == null) {
-//            Role userRole = roleRepository.findByName(ERole.ROLE_USER.toString())
-//                    .orElseThrow(() -> new RuntimeException(env.getProperty(Constants.ROLE_NOT_FOUND)));
-//            roles.add(userRole);
-//        } else {
-//            strRoles.forEach(role -> {
-//                switch (role) {
-//                    case Constants.ADMIN -> {
-//                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN.toString())
-//                                .orElseThrow(() -> new RuntimeException(env.getProperty(Constants.ROLE_NOT_FOUND)));
-//                        roles.add(adminRole);
-//                    }
-//                    default -> {
-//                        Role userRole = roleRepository.findByName(ERole.ROLE_USER.toString())
-//                                .orElseThrow(() -> new RuntimeException(env.getProperty(Constants.ROLE_NOT_FOUND)));
-//                        roles.add(userRole);
-//                    }
-//                }
-//            });
-//        }
-//
-//        return roles;
-//    }
-//
-//    /**
-//     * Update user profile
-//     *
-//     * @param id This user id
-//     * @param userInfoDTO This user profile
-//     * @return Response entity
-//     */
-//    @PutMapping("{id}")
-//    public ResponseEntity<?> updateUserProfile(@PathVariable long id, @RequestBody UserInfoDTO userInfoDTO) {
-//        try {
-//            Optional<User> userOptional = userService.get(id);
-//
-//            // Found
-//            if (userOptional.isPresent()) {
-//                User user = userOptional.get();
-//
-//                // Update info
-//                user.setEmail(userInfoDTO.getEmail());
-//                user.setMobileNo(userInfoDTO.getMobileNo());
-//                user.setCity(userInfoDTO.getCity());
-//
-//                // Save successfully
-//                return new ResponseEntity<>(userService.save(user), HttpStatus.OK);
-//            }
-//
-//            // Not found
-//            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
-//            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-//
-//        } catch (Exception ex) {
-//            logger.info(ex.getMessage());
-//
-//            // Exception
-//            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
-//            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    @DeleteMapping("/delete-expired")
+    public ResponseEntity<?> deleteExpiredOTP() {
+        try {
+            otpService.cleanupExpiredOTP();
+            body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+            return new ResponseEntity<>(body, HttpStatus.CREATED);
+        }   catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
 }

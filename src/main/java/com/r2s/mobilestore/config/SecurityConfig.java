@@ -38,6 +38,12 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Locale;
 
+/**
+ * These SecurityConfig
+ *
+ * @author KhanhBD
+ * @since 2023-10-03
+ */
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 @RequiredArgsConstructor

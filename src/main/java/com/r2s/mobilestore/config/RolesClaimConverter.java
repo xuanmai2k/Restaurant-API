@@ -12,6 +12,12 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * These Roles Claim Converter
+ *
+ * @author KhanhBD
+ * @since 2023-10-03
+ */
 public class RolesClaimConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private final JwtGrantedAuthoritiesConverter wrappedConverter;

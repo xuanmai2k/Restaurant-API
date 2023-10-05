@@ -1,7 +1,9 @@
-package com.r2s.mobilestore.user.services;
+package com.r2s.mobilestore.user.services.Impl;
 
 import com.r2s.mobilestore.user.entities.User;
+import com.r2s.mobilestore.user.repositories.OTPRepository;
 import com.r2s.mobilestore.user.repositories.UserRepository;
+import com.r2s.mobilestore.user.services.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class UserServiceImpl implements UserService {
      */
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private OTPRepository otpRepository;
 
     /**
      * This method is used to list all users
@@ -70,16 +75,17 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Optional<User> getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByFullName(username);
     }
 
     @Override
     public Boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+        return userRepository.existsByFullName(username);
     }
 
     @Override
     public Boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
+
 }

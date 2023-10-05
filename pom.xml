@@ -79,12 +79,12 @@
 			<version>6.0.11</version>
 		</dependency>
 		<!-- ADD 2023/09/05 kyle END -->
-		<!-- ADD 2023/09/05 KhanhBD START -->
+		<!-- ADD 2023/10/04 KhanhBD START -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
-		<!-- ADD 2023/09/05 KhanhBD END -->
+		<!-- ADD 2023/10/04 KhanhBD END -->
 	</dependencies>
 	<build>
 		<plugins>

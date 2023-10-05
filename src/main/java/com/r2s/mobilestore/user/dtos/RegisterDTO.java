@@ -6,8 +6,8 @@ import lombok.Data;
 /**
  * This class is used to register a user
  *
- * @author kyle
- * @since 2023-09-03
+ * @author KhanhBD
+ * @since 2023-10-04
  */
 @Data
 public class RegisterDTO {
@@ -19,7 +19,7 @@ public class RegisterDTO {
     /**
      * Represents the password
      */
-    private String username;
+    private String fullName;
 
     /**
      * Represents the mobile number
@@ -27,8 +27,8 @@ public class RegisterDTO {
     private String password;
 
     /**
-     * Represents the email address
+     * Represents the otp code
      */
-    private String rePassword;
+    private String otpCode;
 }
 

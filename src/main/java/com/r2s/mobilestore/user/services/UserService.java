@@ -52,4 +52,5 @@ public interface UserService {
     Boolean existsByUsername(String username);
 
     Boolean existsByEmail(String email);
+
 }

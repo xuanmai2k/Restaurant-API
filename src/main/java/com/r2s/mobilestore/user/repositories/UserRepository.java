@@ -14,13 +14,12 @@ import java.util.Optional;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    //====== ADD 2023/09/05 kyle START ======//
-    Optional<User> findByUsername(String username);
 
-    Boolean existsByUsername(String username);
+    Optional<User> findByFullName(String fullName);
+
+    Boolean existsByFullName(String fullName);
 
     Boolean existsByEmail(String email);
 
     User findByEmail(String admin);
-    //====== ADD 2023/09/05 kyle END ======//
 }
