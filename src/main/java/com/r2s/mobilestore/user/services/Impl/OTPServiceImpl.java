@@ -1,6 +1,6 @@
 package com.r2s.mobilestore.user.services.Impl;
 
-import com.r2s.mobilestore.user.entities.OTP;
+import com.r2s.mobilestore.user.entities.Otp;
 import com.r2s.mobilestore.user.repositories.OTPRepository;
 import com.r2s.mobilestore.user.services.OTPService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.Random;
 
 /**
- * Represents OTP Service
+ * Represents Otp Service
  * @author KhanhBD
  * @since 2023-10-03
  */
@@ -29,11 +29,11 @@ public class OTPServiceImpl implements OTPService {
     /**
      * This method is used to createOrUpdateOTP
      *
-     * @return OTP code
+     * @return Otp code
      */
     @Override
-    public OTP createOrUpdateOTP(String email) {
-        OTP existingOTP = otpRepository.findByEmail(email);
+    public Otp createOrUpdateOTP(String email) {
+        Otp existingOtp = otpRepository.findByEmail(email);
 
         String otpCode = generateOTP();
         Calendar calendar = Calendar.getInstance();
@@ -41,25 +41,25 @@ public class OTPServiceImpl implements OTPService {
         calendar.add(Calendar.MINUTE, OTP_EXPIRATION_MINUTES);
         Date expirationTime = calendar.getTime();
 
-        // If an OTP already exists for this email, update the OTP and expiration time
-        if (existingOTP != null) {
-            existingOTP.setOtpCode(otpCode);
-            existingOTP.setExpirationTime(expirationTime);
+        // If an Otp already exists for this email, update the Otp and expiration time
+        if (existingOtp != null) {
+            existingOtp.setOtpCode(otpCode);
+            existingOtp.setExpirationTime(expirationTime);
 
-            // Save OTP to database
-            otpRepository.save(existingOTP);
+            // Save Otp to database
+            otpRepository.save(existingOtp);
 
-            return existingOTP;
+            return existingOtp;
         }
 
-        // If no OTP is found for this email, create a new OTP
-        OTP otp = new OTP();
+        // If no Otp is found for this email, create a new Otp
+        Otp otp = new Otp();
         otp.setEmail(email);
         otp.setOtpCode(otpCode);
         otp.setCreatedAt(new Date());
         otp.setExpirationTime(expirationTime);
 
-        // Save OTP to database
+        // Save Otp to database
         otpRepository.save(otp);
 
         return otp;
@@ -73,20 +73,20 @@ public class OTPServiceImpl implements OTPService {
      */
     @Override
     public boolean isOTPValid(String email, String otpCode) {
-        // Check if OTP is valid and not expired
-        OTP otp = otpRepository.findByEmailAndOtpCode(email, otpCode);
+        // Check if Otp is valid and not expired
+        Otp otp = otpRepository.findByEmailAndOtpCode(email, otpCode);
 
         if (otp != null && otp.getExpirationTime().after(new Date())) {
-            return true; // OTP Valid
+            return true; // Otp Valid
         }
 
-        return false; // OTP is invalid or has expired
+        return false; // Otp is invalid or has expired
     }
 
     /**
      * This method is used to generateOTP
      *
-     * @return OTP code string
+     * @return Otp code string
      */
     @Override
     public String generateOTP() {
@@ -105,10 +105,10 @@ public class OTPServiceImpl implements OTPService {
      */
     @Override
     public void deleteOTP(String email) {
-        OTP existingOTP = otpRepository.findByEmail(email);
+        Otp existingOtp = otpRepository.findByEmail(email);
 
-        if (existingOTP != null) {
-            otpRepository.delete(existingOTP);
+        if (existingOtp != null) {
+            otpRepository.delete(existingOtp);
         }
     }
 

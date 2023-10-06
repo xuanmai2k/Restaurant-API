@@ -1,10 +1,7 @@
 package com.r2s.mobilestore.user.repositories;
 
-import com.r2s.mobilestore.user.entities.OTP;
+import com.r2s.mobilestore.user.entities.Otp;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -16,8 +13,8 @@ import java.util.Date;
  * @since 2023-10-03
  */
 @Repository
-public interface OTPRepository extends JpaRepository<OTP, Long> {
-    OTP findByEmailAndOtpCode(String email, String otpCode);
-    OTP findByEmail(String email);
+public interface OTPRepository extends JpaRepository<Otp, Long> {
+    Otp findByEmailAndOtpCode(String email, String otpCode);
+    Otp findByEmail(String email);
     void deleteByExpirationTimeBefore(Date currentTime);
 }

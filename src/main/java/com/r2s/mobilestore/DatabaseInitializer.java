@@ -21,6 +21,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Database Initializer
+ *
+ * @author KhanhBD
+ * @since 2023-10-03
+ */
 @Component
 public class DatabaseInitializer implements ApplicationListener<ApplicationReadyEvent> {
 
@@ -41,6 +47,9 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
         initAdminUser(); // Gọi phương thức để tạo tài khoản admin
     }
 
+    /**
+     * Create admin account
+     */
     private void initAdminUser() {
         Optional<User> adminUser = Optional.ofNullable(userRepository.findByEmail("admin@example.com"));
         if (adminUser.isEmpty()) {
@@ -56,6 +65,9 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
         }
     }
 
+    /**
+     * init Role
+     */
     private void initRole(ERole eRole) {
         switch (eRole) {
             case ROLE_USER -> {
@@ -67,6 +79,9 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
         }
     }
 
+    /**
+     * save Role user
+     */
     private void saveRole(String name) {
         Optional<Role> role = roleRepository.findByName(name);
         if (role.isEmpty()) {

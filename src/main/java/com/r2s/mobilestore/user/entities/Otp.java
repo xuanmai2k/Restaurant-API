@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
- * Represents the OTP
+ * Represents the Otp
  *
  * @author KhanhBD
  * @since 2023-10-03
@@ -18,7 +18,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OTP {
+public class Otp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

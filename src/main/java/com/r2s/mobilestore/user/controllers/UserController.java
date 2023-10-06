@@ -80,7 +80,7 @@ public class UserController {
     private final ResponseDTO body = ResponseDTO.getInstance();
 
     /**
-     * Build send OTP when user register
+     * Build send Otp when user register
      *
      * @param emailDTO This is user email
      * @return status send email
@@ -89,13 +89,13 @@ public class UserController {
     @Transactional
     public ResponseEntity<?> sendOTP(@RequestBody EmailDTO emailDTO) {
         try {
-            // cleanup Expired OTP
+            // cleanup Expired Otp
             otpService.cleanupExpiredOTP();
 
-            // Generate an OTP (One-Time Password)
+            // Generate an Otp (One-Time Password)
             String otp = otpService.createOrUpdateOTP(emailDTO.getEmail()).getOtpCode();
 
-            // Send an email with the OTP
+            // Send an email with the Otp
             emailService.sendEmail(emailDTO.getEmail(),
                     messageSource.getMessage(
                             Constants.EMAIL_SUBJECT, null, Locale.ENGLISH),
@@ -132,11 +132,11 @@ public class UserController {
             }
 
 
-            // Check OTP authentication code
+            // Check Otp authentication code
             boolean isOTPValid = otpService.isOTPValid(registerDTO.getEmail(), registerDTO.getOtpCode());
 
             if (!isOTPValid) {
-                // The OTP code is invalid or has expired
+                // The Otp code is invalid or has expired
                 body.setResponse(Response.Key.STATUS, Response.Value.INVALID_OTP);
                 return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
             }
@@ -152,7 +152,7 @@ public class UserController {
             roles.add(userRole);
             user.setRoles(roles);
 
-            // Delete OTP code after use (optional)
+            // Delete Otp code after use (optional)
             otpService.deleteOTP(registerDTO.getEmail());
 
             // Save a user into db

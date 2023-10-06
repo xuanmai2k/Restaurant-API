@@ -1,10 +1,10 @@
 package com.r2s.mobilestore.user.services;
 
-import com.r2s.mobilestore.user.entities.OTP;
+import com.r2s.mobilestore.user.entities.Otp;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Represents OTP Service
+ * Represents Otp Service
  * @author KhanhBD
  * @since 2023-10-03
  */
@@ -13,9 +13,9 @@ public interface OTPService {
     /**
      * This method is used to createOrUpdateOTP
      *
-     * @return OTP code
+     * @return Otp code
      */
-    public OTP createOrUpdateOTP(String email);
+    public Otp createOrUpdateOTP(String email);
 
     /**
      * This method is used to isOTPValid
@@ -27,7 +27,7 @@ public interface OTPService {
     /**
      * This method is used to generateOTP
      *
-     * @return OTP code string
+     * @return Otp code string
      */
     public String generateOTP();
 

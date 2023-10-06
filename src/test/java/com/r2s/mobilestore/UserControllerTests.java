@@ -4,7 +4,7 @@ package com.r2s.mobilestore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2s.mobilestore.user.dtos.EmailDTO;
 import com.r2s.mobilestore.user.dtos.RegisterDTO;
-import com.r2s.mobilestore.user.entities.OTP;
+import com.r2s.mobilestore.user.entities.Otp;
 import com.r2s.mobilestore.user.services.OTPService;
 import com.r2s.mobilestore.user.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -74,7 +74,7 @@ public class UserControllerTests {
         Date expirationTime = calendar.getTime();
 
         when(otpService.createOrUpdateOTP(emailDTO.getEmail())).thenReturn(
-                new OTP(1L,
+                new Otp(1L,
                         "buiduykhanh.tdc2020@gmail.com",
                         "123456",
                         new Date(),
