@@ -1,10 +1,20 @@
 package com.r2s.mobilestore;
 
-import lombok.NonNull;
+import com.r2s.mobilestore.user.entities.Role;
+import com.r2s.mobilestore.user.entities.User;
+import com.r2s.mobilestore.user.models.ERole;
+import com.r2s.mobilestore.user.repositories.RoleRepository;
+import com.r2s.mobilestore.user.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * This class to init database
@@ -15,9 +25,68 @@ import org.springframework.stereotype.Component;
 @Component
 public class DatabaseInitializer implements ApplicationListener<ApplicationReadyEvent> {
 
-    @Override
-    public void onApplicationEvent(@NonNull ApplicationReadyEvent event) {
+    private final List<ERole> roles = List.of(ERole.ROLE_ADMIN, ERole.ROLE_USER);
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Override
+    public void onApplicationEvent(ApplicationReadyEvent event) {
+        roles.forEach(this::initRole);
+        initAdminUser();// Call method to create admin account
     }
 
+    /**
+     * Create admin account
+     */
+    private void initAdminUser() {
+        Optional<User> adminUser = Optional.ofNullable(userRepository.findByEmail("admin@example.com"));
+
+        // If the admin account does not exist, create it
+        if (adminUser.isEmpty()) {
+
+            User admin = new User();
+            admin.setEmail("admin@example.com");
+            admin.setUsername("admin");
+            admin.setPassword(passwordEncoder.encode("admin")); // Encrypt password
+
+            Set<Role> adminRoles = new HashSet<>();
+            adminRoles.add(roleRepository.findByName(ERole.ROLE_ADMIN.toString()).orElseThrow());
+
+            admin.setRoles(adminRoles);
+
+            userRepository.save(admin);
+        }
+    }
+
+    /**
+     * init Role
+     */
+    private void initRole(ERole eRole) {
+        switch (eRole) {
+            case ROLE_USER -> {
+                saveRole(ERole.ROLE_USER.toString());
+            }
+            case ROLE_ADMIN -> {
+                saveRole(ERole.ROLE_ADMIN.toString());
+            }
+        }
+    }
+
+    /**
+     * save Role user
+     */
+    private void saveRole(String name) {
+        Optional<Role> role = roleRepository.findByName(name);
+        if (role.isEmpty()) {
+            Role userRole = new Role(name);
+            roleRepository.save(userRole);
+        }
+    }
 }
