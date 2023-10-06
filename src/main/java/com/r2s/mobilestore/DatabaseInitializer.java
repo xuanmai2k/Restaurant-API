@@ -39,7 +39,7 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         roles.forEach(this::initRole);
-        initAdminUser(); // Gọi phương thức để tạo tài khoản admin
+        initAdminUser();// Call method to create admin account
     }
 
     /**
@@ -47,15 +47,20 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
      */
     private void initAdminUser() {
         Optional<User> adminUser = Optional.ofNullable(userRepository.findByEmail("admin@example.com"));
+
+        // If the admin account does not exist, create it
         if (adminUser.isEmpty()) {
-            // Nếu tài khoản admin chưa tồn tại, hãy tạo nó
+
             User admin = new User();
             admin.setEmail("admin@example.com");
             admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("admin")); // Mã hóa mật khẩu
+            admin.setPassword(passwordEncoder.encode("admin")); // Encrypt password
+
             Set<Role> adminRoles = new HashSet<>();
             adminRoles.add(roleRepository.findByName(ERole.ROLE_ADMIN.toString()).orElseThrow());
+
             admin.setRoles(adminRoles);
+
             userRepository.save(admin);
         }
     }
