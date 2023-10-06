@@ -21,7 +21,12 @@ public class Response {
         FAILURE,
         SUCCESSFULLY,
         DUPLICATED,
-        NOT_FOUND;
+        NOT_FOUND,
+        //====== ADD 2023/10/04 KhanhBD START ======//
+        INVALID_IMAGES_FILE,
+        INVALID_OTP,
+        INVALID_VALUE;
+        //====== ADD 2023/10/04 KhanhBD END ======//
     }
     //====== ADD 2023/09/01 kyle END ======//
 }

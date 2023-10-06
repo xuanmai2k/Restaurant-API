@@ -40,4 +40,9 @@ public class Constants {
 
     public static final String ROLE_NOT_FOUND = "role.notFound";
     //====== 2023/09/05 kyle END ======//
+
+    //====== 2023/10/04 KhanhBD START ======//
+    public static final String EMAIL_MESSAGE = "email.message";
+    public static final String EMAIL_SUBJECT = "email.subject";
+    //====== 2023/10/04 KhanhBD END ======//
 }

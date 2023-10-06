@@ -17,10 +17,10 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This class to init database
+ * Database Initializer
  *
- * @author kyle
- * @since 2023-10-02
+ * @author KhanhBD
+ * @since 2023-10-03
  */
 @Component
 public class DatabaseInitializer implements ApplicationListener<ApplicationReadyEvent> {
