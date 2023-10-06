@@ -5,14 +5,9 @@ import com.r2s.mobilestore.user.entities.User;
 import com.r2s.mobilestore.user.models.ERole;
 import com.r2s.mobilestore.user.repositories.RoleRepository;
 import com.r2s.mobilestore.user.repositories.UserRepository;
-import com.r2s.mobilestore.utils.Constants;
-import com.r2s.mobilestore.utils.Helpers;
-import jakarta.annotation.PostConstruct;
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
