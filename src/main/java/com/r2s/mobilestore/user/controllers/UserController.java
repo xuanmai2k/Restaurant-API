@@ -4,6 +4,7 @@ import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
 import com.r2s.mobilestore.exceptions.ResourceNotFoundException;
+import com.r2s.mobilestore.user.dtos.ChangePasswordDTO;
 import com.r2s.mobilestore.user.dtos.EmailDTO;
 import com.r2s.mobilestore.user.dtos.RegisterDTO;
 import com.r2s.mobilestore.user.dtos.UpdateUserDTO;
@@ -15,6 +16,7 @@ import com.r2s.mobilestore.user.services.EmailService;
 import com.r2s.mobilestore.user.services.OTPService;
 import com.r2s.mobilestore.user.services.UserService;
 import com.r2s.mobilestore.utils.Constants;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +42,7 @@ import java.util.*;
  * @since 2023-10-03
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("${user.user}")
 public class UserController {
 
@@ -68,6 +74,8 @@ public class UserController {
      * Logging in Spring Boot
      */
     Logger logger = LoggerFactory.getLogger(UserController.class);
+
+    private final AuthenticationManager authManager;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -120,7 +128,7 @@ public class UserController {
      * @return user is updated
      */
     @PutMapping("{id}")
-    public ResponseEntity<?> updateCategory(@PathVariable long id, @RequestBody UpdateUserDTO updateUserDTO) {
+    public ResponseEntity<?> updateUser(@PathVariable long id, @RequestBody UpdateUserDTO updateUserDTO) {
         try {
             Optional<User> updateUser = userService.get(id);
 
@@ -128,7 +136,7 @@ public class UserController {
             if (updateUser.isPresent()) {
                 User user = updateUser.get();
 
-                // Update new category name
+                // Update new user
                 user.setFullName(updateUserDTO.getFullName());
                 user.setUsername(updateUserDTO.getUsername());
                 user.setEmail(updateUserDTO.getEmail());
@@ -244,6 +252,52 @@ public class UserController {
         }
     }
 
+    @PostMapping("${user.change-password}/{id}")
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody ChangePasswordDTO changePasswordDTO) {
+        try {
+            // Check old password
+            authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(changePasswordDTO.getEmail(),
+                            changePasswordDTO.getOldPassword()));
 
+            // Check Otp authentication code
+            boolean isOTPValid = otpService.isOTPValid(changePasswordDTO.getEmail(), changePasswordDTO.getOtpCode());
+
+            if (!isOTPValid) {
+                // The Otp code is invalid or has expired
+                body.setResponse(Response.Key.STATUS, Response.Value.INVALID_OTP);
+                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            }
+
+            // find user by id
+            Optional<User> updateUser = userService.get(id);
+
+            // Delete Otp code
+            otpService.deleteOTP(changePasswordDTO.getEmail());
+
+            // Save a user into db
+            // Found
+            if (updateUser.isPresent()) {
+
+                User user = updateUser.get();
+                user.setPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
+
+                userService.save(user);
+
+                body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+                return new ResponseEntity<>(body, HttpStatus.OK);
+            }
+
+            // Not found
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
