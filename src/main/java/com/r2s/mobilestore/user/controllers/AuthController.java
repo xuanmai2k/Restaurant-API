@@ -21,7 +21,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+/**
+ * Represents a auth controller
+ *
+ * @author KhanhBD
+ * @since 2023-10-09
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${user.user}")

@@ -6,6 +6,12 @@ import lombok.Data;
 
 import java.util.Set;
 
+/**
+ * Represents jwt response
+ *
+ * @author KhanhBD
+ * @since 2023-10-03
+ */
 @Data
 @AllArgsConstructor
 public class JwtResponseDTO {
