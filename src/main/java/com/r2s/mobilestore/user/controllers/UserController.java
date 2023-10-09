@@ -1,9 +1,7 @@
 package com.r2s.mobilestore.user.controllers;
 
-import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
-import com.r2s.mobilestore.exceptions.ResourceNotFoundException;
 import com.r2s.mobilestore.user.dtos.ChangePasswordDTO;
 import com.r2s.mobilestore.user.dtos.EmailDTO;
 import com.r2s.mobilestore.user.dtos.RegisterDTO;
@@ -27,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +40,7 @@ import java.util.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${user.user}")
+@RequestMapping("${address.address}")
 public class UserController {
 
     /**
