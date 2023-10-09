@@ -2,6 +2,7 @@ package com.r2s.mobilestore.user.controllers;
 
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
+import com.r2s.mobilestore.exceptions.ResourceNotFoundException;
 import com.r2s.mobilestore.user.dtos.EmailDTO;
 import com.r2s.mobilestore.user.dtos.RegisterDTO;
 import com.r2s.mobilestore.user.entities.Role;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -78,6 +80,36 @@ public class UserController {
     private OTPService otpService;
 
     private final ResponseDTO body = ResponseDTO.getInstance();
+
+    /**
+     * Build get User By id to view information
+     *
+     * @param userId This is user id
+     * @return status get user
+     */
+    @GetMapping("{userId}")
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+        try {
+            Optional<User> user = userService.getUserById(userId);
+
+            // Found
+            if (user.isPresent()) {
+                // Successfully
+                return new ResponseEntity<>(user.get(), HttpStatus.OK);
+            }
+
+            // Not found
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     /**
      * Build send Otp when user register
@@ -151,6 +183,9 @@ public class UserController {
             roles.add(userRole);
             user.setRoles(roles);
 
+            user.setCreatedAt(LocalDateTime.now());
+            user.setModifiedAt(LocalDateTime.now());
+
             // Delete Otp code after use (optional)
             otpService.deleteOTP(registerDTO.getEmail());
 
@@ -168,5 +203,7 @@ public class UserController {
             return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 
 }

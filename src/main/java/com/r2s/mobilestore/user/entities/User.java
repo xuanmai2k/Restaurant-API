@@ -29,6 +29,8 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String fullName;
 
+    private String username;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -63,15 +65,6 @@ public class User implements UserDetails {
         }
 
         return authorities;
-    }
-
-    @Override
-    public String getUsername() {
-        return this.fullName;
-    }
-
-    public void setUsername(String fullName) {
-        this.fullName = fullName;
     }
 
     @Override

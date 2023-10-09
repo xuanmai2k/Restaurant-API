@@ -6,6 +6,7 @@ import com.r2s.mobilestore.user.repositories.UserRepository;
 import com.r2s.mobilestore.user.services.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,6 +29,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private OTPRepository otpRepository;
+
+    @Autowired
+    private MessageSource messageSource;
 
     /**
      * This method is used to list all users
@@ -88,4 +92,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email);
     }
 
+    /**
+     * This method is used to get a user base on id
+     *
+     * @param userId This is user id
+     * @return user base on id
+     */
+    @Override
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findUserById(userId);
+    }
 }

@@ -1,5 +1,6 @@
 package com.r2s.mobilestore.user.services;
 
+import com.r2s.mobilestore.exceptions.ResourceNotFoundException;
 import com.r2s.mobilestore.user.entities.User;
 
 import java.util.List;
@@ -56,4 +57,13 @@ public interface UserService {
      * @return user base on email
      */
     Optional<User> getUserByEmail(String email);
+
+    /**
+     * This method is used to get a user base on id
+     *
+     * @param userId This is user id
+     * @return user base on id
+     */
+    Optional<User> getUserById(Long userId);
+
 }
