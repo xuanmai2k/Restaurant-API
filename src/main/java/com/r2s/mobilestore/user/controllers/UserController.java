@@ -1,10 +1,12 @@
 package com.r2s.mobilestore.user.controllers;
 
+import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
 import com.r2s.mobilestore.exceptions.ResourceNotFoundException;
 import com.r2s.mobilestore.user.dtos.EmailDTO;
 import com.r2s.mobilestore.user.dtos.RegisterDTO;
+import com.r2s.mobilestore.user.dtos.UpdateUserDTO;
 import com.r2s.mobilestore.user.entities.Role;
 import com.r2s.mobilestore.user.entities.User;
 import com.r2s.mobilestore.user.models.ERole;
@@ -96,6 +98,44 @@ public class UserController {
             if (user.isPresent()) {
                 // Successfully
                 return new ResponseEntity<>(user.get(), HttpStatus.OK);
+            }
+
+            // Not found
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Build update user REST API
+     *
+     * @param id       This is user id
+     * @param updateUserDTO This user details
+     * @return user is updated
+     */
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateCategory(@PathVariable long id, @RequestBody UpdateUserDTO updateUserDTO) {
+        try {
+            Optional<User> updateUser = userService.get(id);
+
+            // Found
+            if (updateUser.isPresent()) {
+                User user = updateUser.get();
+
+                // Update new category name
+                user.setFullName(updateUserDTO.getFullName());
+                user.setUsername(updateUserDTO.getUsername());
+                user.setEmail(updateUserDTO.getEmail());
+                user.setGender(updateUserDTO.getGender());
+                user.setDateOfBirth(updateUserDTO.getDateOfBirth());
+
+                return new ResponseEntity<>(userService.save(user), HttpStatus.OK);
             }
 
             // Not found
