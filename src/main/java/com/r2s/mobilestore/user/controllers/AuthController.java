@@ -1,7 +1,6 @@
 package com.r2s.mobilestore.user.controllers;
 
 import com.r2s.mobilestore.dtos.ResponseDTO;
-import com.r2s.mobilestore.enums.Response;
 import com.r2s.mobilestore.security.JwtTokenUtil;
 import com.r2s.mobilestore.user.dtos.AuthDTO;
 import com.r2s.mobilestore.user.dtos.JwtResponseDTO;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Represents a auth controller
+ * Represents auth controller
  *
  * @author KhanhBD
  * @since 2023-10-09
