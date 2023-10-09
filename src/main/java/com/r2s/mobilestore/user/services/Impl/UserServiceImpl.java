@@ -57,7 +57,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-
     /**
      * This method is used to delete a user by id
      *
@@ -68,24 +67,25 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * This method is used to get user details service
+     * This method is used to confirm exists Email
      *
-     * @param username This is username
-     * @return user This is user
+     * @param email This is email
+     * @return boolean
      */
-    @Override
-    public Optional<User> getUserByUsername(String username) {
-        return userRepository.findByFullName(username);
-    }
-
-    @Override
-    public Boolean existsByUsername(String username) {
-        return userRepository.existsByFullName(username);
-    }
-
     @Override
     public Boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    /**
+     * This method is used to get a user base on email
+     *
+     * @param email This is user email
+     * @return user base on email
+     */
+    @Override
+    public Optional<User> getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 
 }

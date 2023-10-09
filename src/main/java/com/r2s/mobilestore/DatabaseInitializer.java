@@ -46,13 +46,13 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
      * Create admin account
      */
     private void initAdminUser() {
-        Optional<User> adminUser = Optional.ofNullable(userRepository.findByEmail("admin@example.com"));
+        Optional<User> adminUser = userRepository.findByEmail("admin@gmail.com");
 
         // If the admin account does not exist, create it
         if (adminUser.isEmpty()) {
 
             User admin = new User();
-            admin.setEmail("admin@example.com");
+            admin.setEmail("admin@gmail.com");
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("admin")); // Encrypt password
 

@@ -44,5 +44,6 @@ public class Constants {
     //====== 2023/10/04 KhanhBD START ======//
     public static final String EMAIL_MESSAGE = "email.message";
     public static final String EMAIL_SUBJECT = "email.subject";
+    public static final String EMAIL_NOT_FOUND = "email.notFound";
     //====== 2023/10/04 KhanhBD END ======//
 }
