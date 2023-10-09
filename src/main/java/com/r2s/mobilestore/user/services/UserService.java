@@ -42,15 +42,18 @@ public interface UserService {
     public void delete(User user);
 
     /**
-     * This method is used to get user details service
+     * This method is used to confirm exists Email
      *
-     * @param username This is username
-     * @return user This is user
+     * @param email This is email
+     * @return boolean
      */
-    public Optional<User> getUserByUsername(String username);
-
-    Boolean existsByUsername(String username);
-
     Boolean existsByEmail(String email);
 
+    /**
+     * This method is used to get a user base on email
+     *
+     * @param email This is user email
+     * @return user base on email
+     */
+    Optional<User> getUserByEmail(String email);
 }

@@ -121,7 +121,6 @@ public class UserController {
      * @return status register
      */
     @PostMapping("${user.create}")
-//    @Transactional
     public ResponseEntity<?> createUser(@RequestBody RegisterDTO registerDTO) {
         try {
             // Email is duplicated
@@ -168,22 +167,6 @@ public class UserController {
             body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
             return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @DeleteMapping("/delete-expired")
-    public ResponseEntity<?> deleteExpiredOTP() {
-        try {
-            otpService.cleanupExpiredOTP();
-            body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
-            return new ResponseEntity<>(body, HttpStatus.CREATED);
-        }   catch (Exception ex) {
-            logger.info(ex.getMessage());
-
-            // Failed
-            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
-            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
     }
 
 }

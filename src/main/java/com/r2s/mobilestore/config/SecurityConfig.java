@@ -62,10 +62,10 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userService.getUserByUsername(username).orElseThrow(
+        return email -> userService.getUserByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException(
                         messageSource.getMessage(
-                                Constants.USERNAME_NOT_FOUND, new Object[] {username}, Locale.ENGLISH)));
+                                Constants.EMAIL_NOT_FOUND, new Object[] {email}, Locale.ENGLISH)));
     }
 
     @Bean
