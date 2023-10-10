@@ -162,7 +162,7 @@ public class UserControllerTests {
 
     @Test
     void shouldGetUserByIdWhenNotFound() throws Exception {
-        Long userId = 1L; // Thay thế bằng id người dùng thực tế
+        Long userId = 1L; 
         when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get(endpoint +"/{userId}", userId)
@@ -173,7 +173,7 @@ public class UserControllerTests {
 
     @Test
     public void shouldUpdateUserById() throws Exception {
-        // Tạo dữ liệu giả lập cho user mới
+
         long userId = 1L;
         UpdateUserDTO updateUserDTO = new UpdateUserDTO();
         updateUserDTO.setFullName("New FullName");
@@ -184,7 +184,6 @@ public class UserControllerTests {
         User updateUser = mapper.map(updateUserDTO, User.class);
         updateUser.setId(userId);
 
-        // Tạo user giả lập với ID tương ứng
         User existingUser = new User();
         existingUser.setId(userId);
         existingUser.setFullName("Old FullName");
@@ -193,10 +192,9 @@ public class UserControllerTests {
         existingUser.setGender("Female");
         existingUser.setDateOfBirth(LocalDate.of(1980, 1, 1));
 
-        // Mock userService để trả về user giả lập khi gọi userService.get()
         when(userService.get(userId)).thenReturn(Optional.of(existingUser));
         when(userService.save(existingUser)).thenReturn(updateUser);
-        // Thực hiện PUT request để cập nhật user
+
         mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateUserDTO)))
