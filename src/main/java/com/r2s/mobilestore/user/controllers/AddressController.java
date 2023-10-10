@@ -57,10 +57,11 @@ public class AddressController {
      */
 
     @PostMapping("${address.add}{userId}")
-    public ResponseEntity<Address> addAddress(@PathVariable Long userId, @RequestBody AddressDTO addressDTO) {
+    public ResponseEntity<?> addAddress(@PathVariable Long userId, @RequestBody AddressDTO addressDTO) {
         User user = userService.getUserById(userId).orElse(null);
         if (user == null) {
-            return ResponseEntity.notFound().build();
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
 
         // Convert DTO to an entity
@@ -83,7 +84,8 @@ public class AddressController {
     public ResponseEntity<?> getAllAddressesByUser(@PathVariable Long userId) {
         User user = userService.getUserById(userId).orElse(null);
         if (user == null) {
-            return ResponseEntity.notFound().build();
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         }
 
         List<Address> addresses = addressService.findByUser(user);

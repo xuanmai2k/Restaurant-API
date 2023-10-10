@@ -4,10 +4,13 @@ package com.r2s.mobilestore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2s.mobilestore.user.dtos.EmailDTO;
 import com.r2s.mobilestore.user.dtos.RegisterDTO;
+import com.r2s.mobilestore.user.dtos.UpdateUserDTO;
 import com.r2s.mobilestore.user.entities.Otp;
+import com.r2s.mobilestore.user.entities.User;
 import com.r2s.mobilestore.user.services.OTPService;
 import com.r2s.mobilestore.user.services.UserService;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,16 +18,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -52,6 +61,12 @@ public class UserControllerTests {
 
     @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private ModelMapper mapper;
+
+    @Autowired
+    private AuthenticationManager authManager;
 
     @Value("${user.user}")
     private String endpoint;
@@ -129,6 +144,81 @@ public class UserControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerDTO)))
                 .andExpect(status().isCreated()).andDo(print());
+    }
+
+    @Test
+    void shouldGetUserByIdWhenFound() throws Exception {
+        Long userId = 1L; // Thay thế bằng id người dùng thực tế
+        User user = new User(); // Tạo đối tượng User dựa trên dữ liệu mong muốn
+        user.setFullName("buiduykhanh");
+        when(userService.getUserById(userId)).thenReturn(Optional.of(user));
+
+        mockMvc.perform(MockMvcRequestBuilders.get(endpoint +"/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fullName").value(user.getFullName()))
+                .andDo(print());
+    }
+
+    @Test
+    void shouldGetUserByIdWhenNotFound() throws Exception {
+        Long userId = 1L; // Thay thế bằng id người dùng thực tế
+        when(userService.getUserById(userId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(MockMvcRequestBuilders.get(endpoint +"/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    public void shouldUpdateUserById() throws Exception {
+        // Tạo dữ liệu giả lập cho user mới
+        long userId = 1L;
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setFullName("New FullName");
+        updateUserDTO.setUsername("newUsername");
+        updateUserDTO.setEmail("newemail@example.com");
+        updateUserDTO.setGender("Male");
+        updateUserDTO.setDateOfBirth(LocalDate.of(1990, 1, 1));
+        User updateUser = mapper.map(updateUserDTO, User.class);
+        updateUser.setId(userId);
+
+        // Tạo user giả lập với ID tương ứng
+        User existingUser = new User();
+        existingUser.setId(userId);
+        existingUser.setFullName("Old FullName");
+        existingUser.setUsername("oldUsername");
+        existingUser.setEmail("oldemail@example.com");
+        existingUser.setGender("Female");
+        existingUser.setDateOfBirth(LocalDate.of(1980, 1, 1));
+
+        // Mock userService để trả về user giả lập khi gọi userService.get()
+        when(userService.get(userId)).thenReturn(Optional.of(existingUser));
+        when(userService.save(existingUser)).thenReturn(updateUser);
+        // Thực hiện PUT request để cập nhật user
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateUserDTO)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fullName").value(updateUserDTO.getFullName()))
+                .andExpect(jsonPath("$.username").value(updateUserDTO.getUsername()))
+                .andExpect(jsonPath("$.email").value(updateUserDTO.getEmail()))
+                .andExpect(jsonPath("$.gender").value(updateUserDTO.getGender()))
+                .andExpect(jsonPath("$.dateOfBirth").value(updateUserDTO.getDateOfBirth().toString()))
+                .andDo(print());
+    }
+
+    @Test
+    public void shouldUpdateUserByIdReturnNotFoundWhenUserIdNotFound() throws Exception {
+        long nonExistentUserId = 999L;
+
+        when(userService.get(nonExistentUserId)).thenReturn(Optional.empty());
+
+        mockMvc.perform(put("/user/{id}", nonExistentUserId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UpdateUserDTO())))
+                .andExpect(status().isNotFound());
     }
 
 }

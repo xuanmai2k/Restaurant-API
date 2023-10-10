@@ -1,6 +1,5 @@
 package com.r2s.mobilestore.user.repositories;
 
-
 import com.r2s.mobilestore.user.entities.Address;
 import com.r2s.mobilestore.user.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;

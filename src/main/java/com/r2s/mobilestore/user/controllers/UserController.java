@@ -40,7 +40,7 @@ import java.util.*;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("${address.address}")
+@RequestMapping("${user.user}")
 public class UserController {
 
     /**

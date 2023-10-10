@@ -1,6 +1,5 @@
 package com.r2s.mobilestore.user.dtos;
 
-import com.r2s.mobilestore.user.entities.User;
 import lombok.Data;
 
 /**

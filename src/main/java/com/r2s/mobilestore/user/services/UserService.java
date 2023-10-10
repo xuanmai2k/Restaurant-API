@@ -1,6 +1,5 @@
 package com.r2s.mobilestore.user.services;
 
-import com.r2s.mobilestore.exceptions.ResourceNotFoundException;
 import com.r2s.mobilestore.user.entities.User;
 
 import java.util.List;
