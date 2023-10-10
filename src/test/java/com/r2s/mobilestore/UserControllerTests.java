@@ -88,6 +88,7 @@ public class UserControllerTests {
         calendar.add(Calendar.MINUTE, 1);
         Date expirationTime = calendar.getTime();
 
+        // Mock the behavior
         when(otpService.createOrUpdateOTP(emailDTO.getEmail())).thenReturn(
                 new Otp(1L,
                         "buiduykhanh.tdc2020@gmail.com",
@@ -129,7 +130,6 @@ public class UserControllerTests {
     @Transactional
     @Rollback
     void shouldCreateUser() throws Exception {
-
         // Define test data for VerifyDTO here
         RegisterDTO registerDTO = new RegisterDTO();
         registerDTO.setFullName("khanhbui");
@@ -140,6 +140,7 @@ public class UserControllerTests {
         // check valid otp
         when(otpService.isOTPValid(registerDTO.getEmail(), registerDTO.getOtpCode())).thenReturn(true);
 
+        // Perform the API request
         mockMvc.perform(post(getEndpoint)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerDTO)))
@@ -148,9 +149,12 @@ public class UserControllerTests {
 
     @Test
     void shouldGetUserByIdWhenFound() throws Exception {
-        Long userId = 1L; // Thay thế bằng id người dùng thực tế
-        User user = new User(); // Tạo đối tượng User dựa trên dữ liệu mong muốn
+        // Define test data
+        Long userId = 1L;
+        User user = new User();
         user.setFullName("buiduykhanh");
+
+        // Mock the behavior
         when(userService.getUserById(userId)).thenReturn(Optional.of(user));
 
         mockMvc.perform(MockMvcRequestBuilders.get(endpoint +"/{userId}", userId)
@@ -162,9 +166,13 @@ public class UserControllerTests {
 
     @Test
     void shouldGetUserByIdWhenNotFound() throws Exception {
-        Long userId = 1L; 
+        // Define test data
+        Long userId = 1L;
+
+        // Mock the behavior
         when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
+        // Perform the API request
         mockMvc.perform(MockMvcRequestBuilders.get(endpoint +"/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -173,7 +181,7 @@ public class UserControllerTests {
 
     @Test
     public void shouldUpdateUserById() throws Exception {
-
+        // Define test data
         long userId = 1L;
         UpdateUserDTO updateUserDTO = new UpdateUserDTO();
         updateUserDTO.setFullName("New FullName");
@@ -184,6 +192,7 @@ public class UserControllerTests {
         User updateUser = mapper.map(updateUserDTO, User.class);
         updateUser.setId(userId);
 
+        // Define test data
         User existingUser = new User();
         existingUser.setId(userId);
         existingUser.setFullName("Old FullName");
@@ -192,9 +201,11 @@ public class UserControllerTests {
         existingUser.setGender("Female");
         existingUser.setDateOfBirth(LocalDate.of(1980, 1, 1));
 
+        // Mock the behavior
         when(userService.get(userId)).thenReturn(Optional.of(existingUser));
         when(userService.save(existingUser)).thenReturn(updateUser);
 
+        // Perform the API request
         mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateUserDTO)))
@@ -209,10 +220,13 @@ public class UserControllerTests {
 
     @Test
     public void shouldUpdateUserByIdReturnNotFoundWhenUserIdNotFound() throws Exception {
+        // Define test data
         long nonExistentUserId = 999L;
 
+        // Mock the behavior
         when(userService.get(nonExistentUserId)).thenReturn(Optional.empty());
 
+        // Perform the API request
         mockMvc.perform(put("/user/{id}", nonExistentUserId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new UpdateUserDTO())))

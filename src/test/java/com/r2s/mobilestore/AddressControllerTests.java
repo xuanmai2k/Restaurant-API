@@ -95,13 +95,15 @@ public class AddressControllerTests {
     @Transactional
     @Rollback
     void testGetAllAddressesByUser() throws Exception {
+        // Define test data
         Long userId = 1L;
-
         User user = new User();
         user.setId(1L);
 
+        // Mock the behavior
         when(userService.getUserById(userId)).thenReturn(Optional.of(user));
 
+        // Perform
         mockMvc.perform(get(endpoint + userPoint + "{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -118,6 +120,7 @@ public class AddressControllerTests {
 
     @Test
     public void testUpdateAddress() throws Exception {
+        // Define test data
         Long addressId = 1L;
         AddressDTO updatedAddress = new AddressDTO();
         updatedAddress.setName("Updated Name");
@@ -129,6 +132,7 @@ public class AddressControllerTests {
         updatedAddress.setLabel("Updated Label");
         updatedAddress.setIsDefault("true"); // Chuỗi boolean
 
+        // Define test data
         Address existingAddress = new Address();
         existingAddress.setId(addressId);
         existingAddress.setName("Old Name");
@@ -140,9 +144,11 @@ public class AddressControllerTests {
         existingAddress.setLabel("Old Label");
         existingAddress.setDefault(false);
 
+        // Mock the behavior
         when(addressService.getAddressById(addressId)).thenReturn(Optional.of(existingAddress));
         when(addressService.save(existingAddress)).thenReturn(existingAddress);
 
+        // Perform
         mockMvc.perform(put(endpoint+ "/{addressId}", addressId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(updatedAddress)))
@@ -154,7 +160,7 @@ public class AddressControllerTests {
                 .andExpect(jsonPath("$.district").value(updatedAddress.getDistrict()))
                 .andExpect(jsonPath("$.ward").value(updatedAddress.getWard()))
                 .andExpect(jsonPath("$.label").value(updatedAddress.getLabel()))
-                .andDo(print()); // Kiểm tra giá trị boolean là true
+                .andDo(print());
     }
 
     @Test
