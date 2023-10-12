@@ -82,12 +82,15 @@ public class AddressServiceImpl implements AddressService {
     @Override
     @Transactional
     public void updateDefaultAddressesToFalse(Long userId) {
-        List<Address> defaultAddresses = addressRepository.findByUserIdAndIsDefaultTrue(userId);
+        Optional<List<Address>> defaultAddressesOptional = addressRepository.findByUserIdAndIsDefaultTrue(userId);
+        if (defaultAddressesOptional.isPresent()) {
+            List<Address> defaultAddresses = defaultAddressesOptional.get();
 
-        for (Address address : defaultAddresses) {
-            address.setDefault(false);
+            for (Address address : defaultAddresses) {
+                address.setDefault(false);
+            }
+
+            addressRepository.saveAll(defaultAddresses);
         }
-
-        addressRepository.saveAll(defaultAddresses);
     }
 }

@@ -52,5 +52,9 @@ public class Address {
     public void setDefault(boolean aDefault) {
         isDefault = aDefault;
     }
+
+    public boolean isDefault() {
+        return isDefault;
+    }
 }
 

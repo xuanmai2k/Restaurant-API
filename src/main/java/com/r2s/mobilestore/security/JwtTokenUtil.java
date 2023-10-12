@@ -34,7 +34,7 @@ public class JwtTokenUtil {
         var now = Instant.now();
 
         var claims = JwtClaimsSet.builder()
-                .issuer("r2s")
+                .issuer(Constants.R2S)
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(Constants.EXPIRE_DURATION))
                 .subject(format("%s,%s", user.getId(), user.getUsername()))

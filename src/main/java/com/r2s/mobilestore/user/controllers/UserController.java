@@ -91,13 +91,13 @@ public class UserController {
     /**
      * Build get User By id to view information
      *
-     * @param userId This is user id
+     * @param id This is user id
      * @return status get user
      */
-    @GetMapping("{userId}")
-    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+    @GetMapping("{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
         try {
-            Optional<User> user = userService.getUserById(userId);
+            Optional<User> user = userService.getUserById(id);
 
             // Found
             if (user.isPresent()) {
@@ -139,6 +139,7 @@ public class UserController {
                 user.setEmail(updateUserDTO.getEmail());
                 user.setGender(updateUserDTO.getGender());
                 user.setDateOfBirth(updateUserDTO.getDateOfBirth());
+                user.setModifiedAt(LocalDateTime.now());
 
                 return new ResponseEntity<>(userService.save(user), HttpStatus.OK);
             }
@@ -249,6 +250,13 @@ public class UserController {
         }
     }
 
+    /**
+     * Build change password
+     *
+     * @param id This is user id
+     * @param changePasswordDTO
+     * @return status change password
+     */
     @PostMapping("${user.change-password}/{id}")
     public ResponseEntity<?> changePassword(@PathVariable Long id, @RequestBody ChangePasswordDTO changePasswordDTO) {
         try {

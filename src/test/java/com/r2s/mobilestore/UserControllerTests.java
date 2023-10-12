@@ -72,8 +72,10 @@ public class UserControllerTests {
     private String endpoint;
 
     @Value("${user.user}${user.create}")
-    private String getEndpoint;
+    private String creatEndpoint;
 
+    @Value("${user.user}/{id}")
+    private String getEndpoint;
 
     @Test
     @Transactional
@@ -119,7 +121,7 @@ public class UserControllerTests {
         when(otpService.isOTPValid(registerDTO.getEmail(), registerDTO.getOtpCode())).thenReturn(false);
 
         // Perform the API request
-        mockMvc.perform(post(getEndpoint)
+        mockMvc.perform(post(creatEndpoint)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerDTO)))
                 .andExpect(status().isBadRequest())
@@ -141,26 +143,31 @@ public class UserControllerTests {
         when(otpService.isOTPValid(registerDTO.getEmail(), registerDTO.getOtpCode())).thenReturn(true);
 
         // Perform the API request
-        mockMvc.perform(post(getEndpoint)
+        mockMvc.perform(post(creatEndpoint)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerDTO)))
                 .andExpect(status().isCreated()).andDo(print());
     }
 
+    // ADD 2023/10/10 KhanhBD START
     @Test
     void shouldGetUserByIdWhenFound() throws Exception {
         // Define test data
         Long userId = 1L;
         User user = new User();
+        user.setId(userId);
         user.setFullName("buiduykhanh");
+        user.setEmail("khanh@gmail.com");
 
         // Mock the behavior
         when(userService.getUserById(userId)).thenReturn(Optional.of(user));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(endpoint +"/{userId}", userId)
+        mockMvc.perform(MockMvcRequestBuilders.get(getEndpoint, userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.fullName").value(user.getFullName()))
+                .andExpect(jsonPath("$.email").value(user.getEmail()))
                 .andDo(print());
     }
 
@@ -173,7 +180,7 @@ public class UserControllerTests {
         when(userService.getUserById(userId)).thenReturn(Optional.empty());
 
         // Perform the API request
-        mockMvc.perform(MockMvcRequestBuilders.get(endpoint +"/{userId}", userId)
+        mockMvc.perform(MockMvcRequestBuilders.get(getEndpoint, userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andDo(print());
@@ -206,15 +213,16 @@ public class UserControllerTests {
         when(userService.save(existingUser)).thenReturn(updateUser);
 
         // Perform the API request
-        mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", userId)
+        mockMvc.perform(MockMvcRequestBuilders.put(getEndpoint, userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateUserDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.fullName").value(updateUserDTO.getFullName()))
-                .andExpect(jsonPath("$.username").value(updateUserDTO.getUsername()))
-                .andExpect(jsonPath("$.email").value(updateUserDTO.getEmail()))
-                .andExpect(jsonPath("$.gender").value(updateUserDTO.getGender()))
-                .andExpect(jsonPath("$.dateOfBirth").value(updateUserDTO.getDateOfBirth().toString()))
+                .andExpect(jsonPath("$.id").value(updateUser.getId()))
+                .andExpect(jsonPath("$.fullName").value(updateUser.getFullName()))
+                .andExpect(jsonPath("$.username").value(updateUser.getUsername()))
+                .andExpect(jsonPath("$.email").value(updateUser.getEmail()))
+                .andExpect(jsonPath("$.gender").value(updateUser.getGender()))
+                .andExpect(jsonPath("$.dateOfBirth").value(updateUser.getDateOfBirth().toString()))
                 .andDo(print());
     }
 
@@ -227,10 +235,10 @@ public class UserControllerTests {
         when(userService.get(nonExistentUserId)).thenReturn(Optional.empty());
 
         // Perform the API request
-        mockMvc.perform(put("/user/{id}", nonExistentUserId)
+        mockMvc.perform(put(getEndpoint, nonExistentUserId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(new UpdateUserDTO())))
                 .andExpect(status().isNotFound());
     }
-
+    // ADD 2023/10/10 KhanhBD END
 }

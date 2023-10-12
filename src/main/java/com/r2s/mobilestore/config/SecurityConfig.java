@@ -71,9 +71,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // Set permissions on endpoints
-        http.authorizeHttpRequests(registry -> registry
-                .anyRequest()
-                .permitAll());
+        http.authorizeHttpRequests(registry ->
+                registry
+                        // ADD 2023/10/10 KhanhBD START
+                        .requestMatchers("/users", "/users/createUser", "/users/login").permitAll()
+                    .anyRequest().authenticated()
+                        // ADD 2023/10/10 KhanhBD END
+        );
 
 
         http.oauth2ResourceServer(configure ->

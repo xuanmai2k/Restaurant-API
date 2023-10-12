@@ -30,6 +30,7 @@ public class Constants {
 
     public static final String USER = "user";
 
+
     public static final String USERNAME_NOT_FOUND = "username.notFound";
 
     public static final String AUTHORIZATION_TYPE = "Bearer";
@@ -45,5 +46,6 @@ public class Constants {
     public static final String EMAIL_MESSAGE = "email.message";
     public static final String EMAIL_SUBJECT = "email.subject";
     public static final String EMAIL_NOT_FOUND = "email.notFound";
+    public static final String R2S = "r2s";
     //====== 2023/10/04 KhanhBD END ======//
 }
