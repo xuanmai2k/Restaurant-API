@@ -44,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2023-10-05
  */
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class UserControllerTests {
 
     @MockBean
@@ -192,7 +192,7 @@ public class UserControllerTests {
         long userId = 1L;
         UpdateUserDTO updateUserDTO = new UpdateUserDTO();
         updateUserDTO.setFullName("New FullName");
-        updateUserDTO.setUsername("newUsername");
+        updateUserDTO.setPhoneNumber("0123456789");
         updateUserDTO.setEmail("newemail@example.com");
         updateUserDTO.setGender("Male");
         updateUserDTO.setDateOfBirth(LocalDate.of(1990, 1, 1));
@@ -203,7 +203,7 @@ public class UserControllerTests {
         User existingUser = new User();
         existingUser.setId(userId);
         existingUser.setFullName("Old FullName");
-        existingUser.setUsername("oldUsername");
+        existingUser.setPhoneNumber("9876543210");
         existingUser.setEmail("oldemail@example.com");
         existingUser.setGender("Female");
         existingUser.setDateOfBirth(LocalDate.of(1980, 1, 1));
@@ -219,7 +219,7 @@ public class UserControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(updateUser.getId()))
                 .andExpect(jsonPath("$.fullName").value(updateUser.getFullName()))
-                .andExpect(jsonPath("$.username").value(updateUser.getUsername()))
+                .andExpect(jsonPath("$.phoneNumber").value(updateUser.getPhoneNumber()))
                 .andExpect(jsonPath("$.email").value(updateUser.getEmail()))
                 .andExpect(jsonPath("$.gender").value(updateUser.getGender()))
                 .andExpect(jsonPath("$.dateOfBirth").value(updateUser.getDateOfBirth().toString()))

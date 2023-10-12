@@ -135,7 +135,7 @@ public class UserController {
 
                 // Update new user
                 user.setFullName(updateUserDTO.getFullName());
-                user.setUsername(updateUserDTO.getUsername());
+                user.setPhoneNumber(updateUserDTO.getPhoneNumber());
                 user.setEmail(updateUserDTO.getEmail());
                 user.setGender(updateUserDTO.getGender());
                 user.setDateOfBirth(updateUserDTO.getDateOfBirth());

@@ -11,14 +11,14 @@ spring:
         format_sql: true
       show-sql: true
 
-
+# ADD 2023/10/09 KhanhBD START
 #Request mapping
 user:
   user: /users
   create: /createUser
   login: /login
   change-password: /change-password
-# ADD 2023/10/09 KhanhBD START
+
 address:
   address: /addresses
   add: /add/

@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Data
 public class UpdateUserDTO {
     private String fullName;
-    private String username;
+    private String phoneNumber;
     private String email;
     private String gender;
     private LocalDate dateOfBirth;
