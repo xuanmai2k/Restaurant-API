@@ -60,7 +60,7 @@ public class PromotionController {
                 promotionList = promotionService.listAll(pageNumber, pageSize);
             } else {
                 //Filter
-                promotionList = promotionService.filterByDiscountCode(searchPromotionDTO, pageNumber, pageSize);
+                promotionList = promotionService.search(searchPromotionDTO, pageNumber, pageSize);
             }
 
             //Not empty

@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 /**
  * Custom response status
  *
@@ -17,5 +19,25 @@ public class SearchPromotionDTO {
     /**
      * Represents the discount code.
      */
-    private String discountCode;
+    private String discountCode = "";
+
+    /**
+     * Represents the expiration date.
+     */
+    private Date expireDate = null;
+
+    /**
+     * Represents discount available
+     */
+    private Boolean discountAvailable;
+
+    /**
+     * Represents min discount
+     */
+    private Integer minDiscount = 0;
+
+    /**
+     * Represents max discount
+     */
+    private Integer maxDiscount = 100;
 }

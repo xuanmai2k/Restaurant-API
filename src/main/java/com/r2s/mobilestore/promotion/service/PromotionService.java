@@ -31,7 +31,7 @@ public interface PromotionService {
      * @param pageSize     This is size of page
      * @return List of promotions
      */
-    public Page<Promotion> filterByDiscountCode(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize);
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize);
 
     /**
      * This method is used to get a promotion base on id

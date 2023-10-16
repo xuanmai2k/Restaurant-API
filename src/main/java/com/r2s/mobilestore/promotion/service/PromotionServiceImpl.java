@@ -49,8 +49,14 @@ public class PromotionServiceImpl implements PromotionService {
      * @return List of promotions
      */
     @Override
-    public Page<Promotion> filterByDiscountCode(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) {
-        return promotionRepository.findByDiscountCodeContaining(searchPromotionDTO.getDiscountCode(), PageRequest.of(pageNumber, pageSize));
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) {
+        return promotionRepository.searchPromotion(
+                searchPromotionDTO.getDiscountCode(),
+                searchPromotionDTO.getExpireDate(),
+                searchPromotionDTO.getDiscountAvailable(),
+                searchPromotionDTO.getMinDiscount(),
+                searchPromotionDTO.getMaxDiscount(),
+                PageRequest.of(pageNumber, pageSize));
     }
 
     /**

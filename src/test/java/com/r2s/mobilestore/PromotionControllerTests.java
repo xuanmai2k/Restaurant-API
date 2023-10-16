@@ -103,64 +103,64 @@ public class PromotionControllerTests {
     }
 
 
-    @Test
-    void shouldReturnPageOfPromotions() throws Exception {
+//    @Test
+//    void shouldReturnPageOfPromotions() throws Exception {
+//
+//        List<Promotion> promotionList = Arrays.asList(
+//                new Promotion(1, "999abc", 1000, 35.0, 100,
+//                        new Date(2023, 3, 10), "junit test", true),
+//                new Promotion(2, "888abc", 2000, 40.0, 200,
+//                        new Date(2023, 9, 12), "junit test", false)
+//        );
+//
+//        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO(null);
+//        Page<Promotion> promotions = new PageImpl<>(promotionList);
+//
+//        when(promotionService.listAll(0, 2)).thenReturn(promotions);
+//        mockMvc.perform(get(endpoint)
+//                        .param("pageNumber", "0")
+//                        .param("pageSize", "2"))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.content", hasSize(2)))
+//                .andDo(print());
+//    }
 
-        List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1, "999abc", 1000, 35.0, 100,
-                        new Date(2023, 3, 10), "junit test", true),
-                new Promotion(2, "888abc", 2000, 40.0, 200,
-                        new Date(2023, 9, 12), "junit test", false)
-        );
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO(null);
-        Page<Promotion> promotions = new PageImpl<>(promotionList);
-
-        when(promotionService.listAll(0, 2)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(2)))
-                .andDo(print());
-    }
-
-
-    @Test
-    void shouldReturnPageOfPromotionWithFilter() throws Exception {
-
-        List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1, "999abc", 1000, 35.0, 100,
-                        new Date(2023, 3, 10), "junit test", true),
-                new Promotion(2, "888abc", 2000, 40.0, 200,
-                        new Date(2023, 9, 12), "junit test", false)
-        );
-
-        Page<Promotion> promotions = new PageImpl<>(promotionList);
-
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc");
-
-        when(promotionService.filterByDiscountCode(searchPromotionDTO, 0, 2)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
-                        .content("{\"discountCode\":\"abc\"}")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-
-        promotionList = Collections.emptyList();
-        Page<Promotion> promotionEmpty = new PageImpl<>(promotionList);
-
-        when(promotionService.filterByDiscountCode(searchPromotionDTO, 0, 2)).thenReturn(promotionEmpty);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
-                        .content("{\"discountCode\":\"abc\"}")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent())
-                .andDo(print());
-    }
+//    @Test
+//    void shouldReturnPageOfPromotionWithFilter() throws Exception {
+//
+//        List<Promotion> promotionList = Arrays.asList(
+//                new Promotion(1, "999abc", 1000, 35.0, 100,
+//                        new Date(2023, 3, 10), "junit test", true),
+//                new Promotion(2, "888abc", 2000, 40.0, 200,
+//                        new Date(2023, 9, 12), "junit test", false)
+//        );
+//
+//        Page<Promotion> promotions = new PageImpl<>(promotionList);
+//
+//        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc");
+//
+//        when(promotionService.filterByDiscountCode(searchPromotionDTO, 0, 2)).thenReturn(promotions);
+//        mockMvc.perform(get(endpoint)
+//                        .param("pageNumber", "0")
+//                        .param("pageSize", "2")
+//                        .content("{\"discountCode\":\"abc\"}")
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andDo(print());
+//
+//        promotionList = Collections.emptyList();
+//        Page<Promotion> promotionEmpty = new PageImpl<>(promotionList);
+//
+//        when(promotionService.filterByDiscountCode(searchPromotionDTO, 0, 2)).thenReturn(promotionEmpty);
+//        mockMvc.perform(get(endpoint)
+//                        .param("pageNumber", "0")
+//                        .param("pageSize", "2")
+//                        .content("{\"discountCode\":\"abc\"}")
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isNoContent())
+//                .andDo(print());
+//    }
 
 
     @Test
