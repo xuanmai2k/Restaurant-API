@@ -3,23 +3,31 @@ package com.r2s.mobilestore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2s.mobilestore.promotion.controllers.PromotionController;
+import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.service.PromotionService;
+import com.r2s.mobilestore.user.dtos.AuthDTO;
+import com.r2s.mobilestore.user.entities.User;
+import org.apache.catalina.Authenticator;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
 
 import java.util.*;
 
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -59,6 +67,7 @@ public class PromotionControllerTests {
 
     @Value("${promotion}/{id}")
     private String getEndpoint;
+    private Authenticator authenticationManager;
 
 
     @Test
@@ -101,6 +110,7 @@ public class PromotionControllerTests {
 
     @Test
     void shouldReturnPageOfPromotions() throws Exception {
+
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1, "999abc", 1000, 35.0, 100,
                         new Date(2023, 3, 10), "junit test", true),
@@ -108,6 +118,7 @@ public class PromotionControllerTests {
                         new Date(2023, 9, 12), "junit test", false)
         );
 
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO(null);
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
         when(promotionService.listAll(0, 2)).thenReturn(promotions);
@@ -115,12 +126,14 @@ public class PromotionControllerTests {
                         .param("pageNumber", "0")
                         .param("pageSize", "2"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(2)))
                 .andDo(print());
     }
 
 
     @Test
     void shouldReturnPageOfPromotionWithFilter() throws Exception {
+
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1, "999abc", 1000, 35.0, 100,
                         new Date(2023, 3, 10), "junit test", true),
@@ -130,24 +143,26 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        String discountCode = "abc";
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc");
 
-        when(promotionService.filterByDiscountCode(discountCode, 0, 2)).thenReturn(promotions);
+        when(promotionService.filterByDiscountCode(searchPromotionDTO, 0, 2)).thenReturn(promotions);
         mockMvc.perform(get(endpoint)
                         .param("pageNumber", "0")
                         .param("pageSize", "2")
-                        .param("discountCode", "abc"))
+                        .content("{\"discountCode\":\"abc\"}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
 
         promotionList = Collections.emptyList();
         Page<Promotion> promotionEmpty = new PageImpl<>(promotionList);
 
-        when(promotionService.filterByDiscountCode(discountCode, 0, 2)).thenReturn(promotionEmpty);
+        when(promotionService.filterByDiscountCode(searchPromotionDTO, 0, 2)).thenReturn(promotionEmpty);
         mockMvc.perform(get(endpoint)
                         .param("pageNumber", "0")
                         .param("pageSize", "2")
-                        .param("discountCode", "abc"))
+                        .content("{\"discountCode\":\"abc\"}")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andDo(print());
     }

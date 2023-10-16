@@ -8,11 +8,7 @@ db:
   name: r2s_mobile_store_db
   endpoint: localhost
   username: root
-<<<<<<< HEAD
   password: 444d50444d50
-=======
-  password: root
->>>>>>> 04426b21a1b8fe1d0f836f8b3710c875fec3abf6
 
 spring:
   datasource:
