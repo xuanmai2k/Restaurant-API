@@ -3,6 +3,7 @@ package com.r2s.mobilestore.product.controllers;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Product;
 import com.r2s.mobilestore.product.services.ProductService;
 import org.slf4j.Logger;
@@ -185,21 +186,17 @@ public class ProductController {
     /**
      * Build search product REST API
      *
-     * @param name         This is name of product
-     * @param manufacturer This is manufacturer of product
-     * @param category_id  This is category id of product
+     * @param searchProductDTO There are keyword, category and manufacturer
      * @param pageNumber   This is number of page
      * @param pageSize     This is size of page
      * @return list of products
      */
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam(required = false, defaultValue = "") String name,
-                                    @RequestParam(required = false, defaultValue = "") String manufacturer,
-                                    @RequestParam(required = false, defaultValue = "1") String category_id,
+    public ResponseEntity<?> search(@RequestBody SearchProductDTO searchProductDTO,
                                     @RequestParam Integer pageNumber,
                                     @RequestParam Integer pageSize) {
         try {
-            Page<Product> productList = productService.search(name, manufacturer, category_id, pageNumber, pageSize);
+            Page<Product> productList = productService.search(searchProductDTO, pageNumber, pageSize);
 
             //Not found
             if (productList.isEmpty()) {

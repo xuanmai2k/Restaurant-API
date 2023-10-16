@@ -3,6 +3,7 @@ package com.r2s.mobilestore.product.services;
 import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.category.repositories.CategoryRepository;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Manufacturer;
 import com.r2s.mobilestore.product.entities.Product;
 import com.r2s.mobilestore.product.repositories.ManufacturerRepository;
@@ -50,6 +51,12 @@ public class ProductServiceImpl implements ProductService {
     private String folderPath;
 
     /**
+     * @value random characters
+     */
+    @Value("${LENGTH_OF_PRODUCT_CODE}")
+    private Integer length;
+
+    /**
      * This method is used to list all products
      *
      * @param pageNumber This is number of page
@@ -83,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = new Product();
 
-        product.setProductCode(randomProductCode(8));
+        product.setProductCode(getRandomProductCode(length));
         product.setName(createProductDTO.getName());
         product.setPrice(createProductDTO.getPrice());
         product.setQuantity(createProductDTO.getQuantity());
@@ -279,36 +286,47 @@ public class ProductServiceImpl implements ProductService {
      *
      * @param length This is length of product code
      */
-    public String randomProductCode(int length) {
+    @Override
+    public String getRandomProductCode(int length) {
         String productCode;
+        //create product code
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(length);
 
         do {
-            //create product code
-            SecureRandom random = new SecureRandom();
-            StringBuilder sb = new StringBuilder(length);
-
             for (int i = 0; i < length; i++) {
                 int randomIndex = random.nextInt(allowedCharacters.length());
                 sb.append(allowedCharacters.charAt(randomIndex));
             }
             productCode = sb.toString();
-        } while (productRepository.existsByProductCode(productCode)); // check product code
+        } while (existProductCode(productCode)); // check product code
 
         return productCode;
     }
 
     /**
+     * This method is used to check existing product code
+     *
+     * @param productCode This is product code
+     */
+    public Boolean existProductCode(String productCode){
+        return productRepository.existsByProductCode(productCode);
+    }
+
+    /**
      * This method is used to search  product
      *
-     * @param name         This is name of product
-     * @param manufacturer This is manufacturer of product
-     * @param category   This is category id of product
+     * @param searchProductDTO There are keyword, category and manufacturer
      * @param pageNumber   This is number of page
      * @param pageSize     This is size of page
      * @return list of products
      */
     @Override
-    public Page<Product> search(String name, String manufacturer, String category, int pageNumber, int pageSize) {
-        return productRepository.searchProduct(name, manufacturer, category, PageRequest.of(pageNumber, pageSize));
+    public Page<Product> search(SearchProductDTO searchProductDTO, int pageNumber, int pageSize) {
+        return productRepository.searchProduct(
+                searchProductDTO.getKeyword(),
+                searchProductDTO.getManufacturer(),
+                searchProductDTO.getCategory(),
+                PageRequest.of(pageNumber, pageSize));
     }
 }

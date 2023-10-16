@@ -19,16 +19,19 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<Product> findProductsById(Long id);
 
-    @Query("SELECT p " +
+    @Query("SELECT p , c.categoryName, m.manufacturerName " +
             "FROM Product p " +
             "INNER JOIN Category c ON p.category.id = c.id " +
-            "WHERE p.name LIKE %:name% " +
-            "AND p.manufacturer LIKE %:manufacturer% " +
-            "AND c.id = :category" )
-    Page<Product> searchProduct(@Param("name") String name,
+            "INNER JOIN Manufacturer m ON p.manufacturer.id = m.id " +
+            "WHERE p.name LIKE %:keyword% " +
+            "OR p.productCode LIKE %:keyword% " +
+            "AND m.manufacturerName LIKE %:manufacturer% " +
+            "AND c.categoryName LIKE %:category%" )
+    Page<Product> searchProduct(@Param("keyword") String keyword,
                                 @Param("manufacturer") String manufacturer,
                                 @Param("category") String category,
                                 Pageable pageable);
+
 
     boolean existsByProductCode(String productCode);
 }
