@@ -79,11 +79,23 @@
 			<version>6.0.11</version>
 		</dependency>
 		<!-- ADD 2023/09/05 kyle END -->
+
+		<!-- ADD 2023/10/06 xuanmai START -->
+		<!-- Validation -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+			<version>3.1.4</version>
+		</dependency>
+		<!-- ADD 2023/10/06 xuanmai END -->
+
 		<!-- ADD 2023/10/04 KhanhBD START -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+
 		<!-- ADD 2023/10/04 KhanhBD END -->
 	</dependencies>
 	<build>

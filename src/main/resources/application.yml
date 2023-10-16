@@ -21,6 +21,11 @@ user:
 
 category: /categories
 
+##====== ADD 2023/10/03 xuanmai START ======#
+promotion: /promotions
+ALLOWED_CHARACTERS: 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
+LENGTH_OF_DISCOUNT_CODE_PROMOTION: 6
+##====== ADD 2023/10/11 xuanmai END ======#
 # JWT RSA key pair
 jwt:
   private:
