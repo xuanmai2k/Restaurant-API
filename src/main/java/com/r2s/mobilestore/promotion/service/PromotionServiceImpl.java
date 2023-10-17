@@ -11,11 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -49,20 +45,44 @@ public class PromotionServiceImpl implements PromotionService {
      * Get all promotions containing discount code
      *
      * @param searchPromotionDTO This is discount code of promotion
-     * @param pageNumber   This is number of page
-     * @param pageSize     This is size of page
+     * @param pageNumber         This is number of page
+     * @param pageSize           This is size of page
      * @return List of promotions
      */
     @Override
-    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) throws ParseException {
-        LocalDate date = LocalDate.parse(searchPromotionDTO.getExpireDate());
-        return promotionRepository.searchPromotion(
-                searchPromotionDTO.getDiscountCode(),
-                date,
-                searchPromotionDTO.getDiscountAvailable(),
-                searchPromotionDTO.getMinDiscount(),
-                searchPromotionDTO.getMaxDiscount(),
-                PageRequest.of(pageNumber, pageSize));
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) {
+        //get max and min of expire date
+        LocalDate minExpireDate = promotionRepository.findMinExpireDate();
+        LocalDate maxExpireDate = promotionRepository.findMaxExpireDate();
+
+        LocalDate date = null;
+
+        //expire date is not null
+        if (searchPromotionDTO.getExpireDate() != null) {
+            date = LocalDate.parse(searchPromotionDTO.getExpireDate());
+        }
+
+        //discount available is not null
+        if (searchPromotionDTO.getDiscountAvailable() != null) {
+            return promotionRepository.searchPromotion(
+                    searchPromotionDTO.getDiscountCode(),
+                    date == null ? minExpireDate : date, //if date is null, get min value
+                    date == null ? maxExpireDate : date, //if date is null, get max value
+                    searchPromotionDTO.getDiscountAvailable(),
+                    searchPromotionDTO.getMinDiscount(),
+                    searchPromotionDTO.getMaxDiscount(),
+                    PageRequest.of(pageNumber, pageSize));
+        } else {
+
+            //discount available is null
+            return promotionRepository.searchPromotionWithoutDiscountAvailable(
+                    searchPromotionDTO.getDiscountCode(),
+                    date == null ? minExpireDate : date,
+                    date == null ? maxExpireDate : date,
+                    searchPromotionDTO.getMinDiscount(),
+                    searchPromotionDTO.getMaxDiscount(),
+                    PageRequest.of(pageNumber, pageSize));
+        }
     }
 
     /**
@@ -121,7 +141,7 @@ public class PromotionServiceImpl implements PromotionService {
         return discountCode;
     }
 
-    public Boolean checkForExistence(String discountCode){
+    public Boolean checkForExistence(String discountCode) {
         return promotionRepository.existsByDiscountCode(discountCode);
     }
 }

@@ -11,13 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -46,8 +44,8 @@ public class PromotionController {
      * REST API methods for Retrieval operations
      *
      * @param searchPromotionDTO This is discount code
-     * @param pageNumber   This is number of page
-     * @param pageSize     This is size of page
+     * @param pageNumber         This is number of page
+     * @param pageSize           This is size of page
      * @return list all of promotions
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

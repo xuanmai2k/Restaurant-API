@@ -4,10 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * Represents a promotion
@@ -65,6 +65,7 @@ public class Promotion {
      * Represents description's discount
      */
     @Column(name = "campaign_description", nullable = false)
+    @Size(min = 1, max = 1000, message = "Must be from 1 to 1000 characters")
     private String campaignDescription;
 
     /**

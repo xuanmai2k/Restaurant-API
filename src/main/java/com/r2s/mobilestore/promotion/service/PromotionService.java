@@ -28,8 +28,8 @@ public interface PromotionService {
      * Find promotion by discount code
      *
      * @param searchPromotionDTO This is discount code
-     * @param pageNumber   This is number of page
-     * @param pageSize     This is size of page
+     * @param pageNumber         This is number of page
+     * @param pageSize           This is size of page
      * @return List of promotions
      */
     public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) throws ParseException;
