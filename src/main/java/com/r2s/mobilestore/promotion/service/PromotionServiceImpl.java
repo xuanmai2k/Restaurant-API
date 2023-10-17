@@ -11,6 +11,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -49,10 +54,11 @@ public class PromotionServiceImpl implements PromotionService {
      * @return List of promotions
      */
     @Override
-    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) {
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) throws ParseException {
+        LocalDate date = LocalDate.parse(searchPromotionDTO.getExpireDate());
         return promotionRepository.searchPromotion(
                 searchPromotionDTO.getDiscountCode(),
-                searchPromotionDTO.getExpireDate(),
+                date,
                 searchPromotionDTO.getDiscountAvailable(),
                 searchPromotionDTO.getMinDiscount(),
                 searchPromotionDTO.getMaxDiscount(),

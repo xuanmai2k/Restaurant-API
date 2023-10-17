@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -24,12 +25,12 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     @Query("SELECT p " +
             "FROM Promotion p " +
             "WHERE p.discountCode LIKE %:discountCode% " +
-            "AND p.expireDate LIKE %:expireDate% " +
+            "AND p.expireDate = %:expireDate% " +
             "AND p.discountAvailable = :discountAvailable " +
             "AND p.discount >= :minDiscount " +
             "AND p.discount <= :maxDiscount")
     Page<Promotion> searchPromotion(@Param("discountCode") String discountCode,
-                                    @Param("expireDate") Date expireDate,
+                                    @Param("expireDate") LocalDate expireDate,
                                     @Param("discountAvailable") Boolean discountAvailable,
                                     @Param("minDiscount") Integer minDiscount,
                                     @Param("maxDiscount") Integer maxDiscount,

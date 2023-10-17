@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -58,7 +59,7 @@ public class Promotion {
      */
     @Column(name = "expire_date", nullable = false)
     @Future(message = "Expire date must be in the future")
-    private Date expireDate;
+    private LocalDate expireDate;
 
     /**
      * Represents description's discount

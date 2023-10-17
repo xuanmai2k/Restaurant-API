@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 /**
@@ -24,7 +25,7 @@ public class SearchPromotionDTO {
     /**
      * Represents the expiration date.
      */
-    private Date expireDate = null;
+    private String expireDate;
 
     /**
      * Represents discount available

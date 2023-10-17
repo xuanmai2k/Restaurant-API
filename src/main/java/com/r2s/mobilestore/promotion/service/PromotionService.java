@@ -4,6 +4,7 @@ import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import org.springframework.data.domain.Page;
 
+import java.text.ParseException;
 import java.util.Optional;
 
 /**
@@ -31,7 +32,7 @@ public interface PromotionService {
      * @param pageSize     This is size of page
      * @return List of promotions
      */
-    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize);
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) throws ParseException;
 
     /**
      * This method is used to get a promotion base on id
