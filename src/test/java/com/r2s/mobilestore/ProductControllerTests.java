@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.category.services.CategoryService;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Manufacturer;
 import com.r2s.mobilestore.product.entities.Product;
 import com.r2s.mobilestore.product.repositories.ManufacturerRepository;
@@ -218,4 +219,117 @@ public class ProductControllerTests {
         assertEquals("iphone11", updateProduct.getName());
     }
 
+    @Test
+    void returnListOfProductsUsingSearch() throws Exception {
+        List<String> image = new ArrayList<>();
+        image.add("123.jpg");
+        image.add("456.jpg");
+
+        Category category = new Category(1L, "phone");
+        when(categoryService.save(category)).thenReturn(category);
+
+        List<Manufacturer> manufacturer = new ArrayList<>();
+        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        manufacturer.add(0, manufacturer1);
+
+        when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
+
+        List<Product> productList = new ArrayList<>(Arrays.asList(
+                new Product(1L,"ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                        "silver", "new", manufacturer1, category, image),
+                new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                        "silver", "new", manufacturer1, category, image)));
+
+        Integer pageNumber = 0;
+        Integer pageSize = 2;
+
+        Page<Product> productPage = new PageImpl<>(productList);
+
+        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","apple","phone");
+
+        when(productService.search(searchProductDTO,pageNumber, pageSize)).thenReturn(productPage);
+        mockMvc.perform(get(endpoint + "/search")
+                        .param("pageNumber", "0")
+                        .param("pageSize", "2")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(searchProductDTO)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void returnListOfProductsUsingSearchWithoutManufacturer() throws Exception {
+        List<String> image = new ArrayList<>();
+        image.add("123.jpg");
+        image.add("456.jpg");
+
+        Category category = new Category(1L, "phone");
+        when(categoryService.save(category)).thenReturn(category);
+
+        List<Manufacturer> manufacturer = new ArrayList<>();
+        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        manufacturer.add(0, manufacturer1);
+
+        when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
+
+        List<Product> productList = new ArrayList<>(Arrays.asList(
+                new Product(1L,"ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                        "silver", "new", manufacturer1, category, image),
+                new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                        "silver", "new", manufacturer1, category, image)));
+
+        Integer pageNumber = 0;
+        Integer pageSize = 2;
+
+        Page<Product> productPage = new PageImpl<>(productList);
+
+        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","","phone");
+
+        when(productService.search(searchProductDTO,pageNumber, pageSize)).thenReturn(productPage);
+        mockMvc.perform(get(endpoint + "/search")
+                        .param("pageNumber", "0")
+                        .param("pageSize", "2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(searchProductDTO)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void returnListOfProductsUsingSearchWithoutCategory() throws Exception {
+        List<String> image = new ArrayList<>();
+        image.add("123.jpg");
+        image.add("456.jpg");
+
+        Category category = new Category(1L, "phone");
+        when(categoryService.save(category)).thenReturn(category);
+
+        List<Manufacturer> manufacturer = new ArrayList<>();
+        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        manufacturer.add(0, manufacturer1);
+
+        when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
+
+        List<Product> productList = new ArrayList<>(Arrays.asList(
+                new Product(1L,"ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                        "silver", "new", manufacturer1, category, image),
+                new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                        "silver", "new", manufacturer1, category, image)));
+
+        Integer pageNumber = 0;
+        Integer pageSize = 2;
+
+        Page<Product> productPage = new PageImpl<>(productList);
+
+        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","apple","");
+
+        when(productService.search(searchProductDTO,pageNumber, pageSize)).thenReturn(productPage);
+        mockMvc.perform(get(endpoint + "/search")
+                        .param("pageNumber", "0")
+                        .param("pageSize", "2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(searchProductDTO)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 }
