@@ -19,7 +19,9 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "products")
+@Table(name = "products", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"product_code"})
+})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +30,7 @@ public class Product {
     /**
      * Represents the product’s code.
      */
-    @Column(name = "product_code")
+    @Column(name = "product_code", unique = true)
     private String productCode;
 
     /**

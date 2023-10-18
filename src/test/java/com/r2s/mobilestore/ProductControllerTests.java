@@ -4,6 +4,7 @@ package com.r2s.mobilestore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.category.services.CategoryService;
+import com.r2s.mobilestore.product.controllers.ProductController;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Manufacturer;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -43,8 +45,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2023-10-10
  */
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(ProductController.class)
+@AutoConfigureMockMvc(addFilters = false) //Ignore spring security
 public class ProductControllerTests {
     @Autowired
     protected MockMvc mockMvc;

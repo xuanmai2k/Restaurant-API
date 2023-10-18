@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -43,6 +44,7 @@ public class ProductController {
      * @param pageSize   This is size of page
      * @return list all of products
      */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping()
     public ResponseEntity<?> getAllProducts(@RequestParam Integer pageNumber,
                                             @RequestParam Integer pageSize) {
@@ -75,6 +77,7 @@ public class ProductController {
      * @param id This is product id
      * @return a product
      */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("{id}")
     public ResponseEntity<?> getProductById(@PathVariable Long id) {
         try {
@@ -105,6 +108,7 @@ public class ProductController {
      * @param createProductDTO This is a product
      * @return a product is inserted into database
      */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<?> createProduct(@ModelAttribute CreateProductDTO createProductDTO) throws IOException {
         try {
@@ -129,6 +133,7 @@ public class ProductController {
      * @param createProductDTO This product details
      * @return product is updated
      */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("{id}")
     public ResponseEntity<?> updateProduct(@PathVariable Long id, @ModelAttribute CreateProductDTO createProductDTO) {
         try {
@@ -160,6 +165,7 @@ public class ProductController {
      * @param id This is product id
      * @return http status
      */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         try {
@@ -191,6 +197,7 @@ public class ProductController {
      * @param pageSize     This is size of page
      * @return list of products
      */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestBody SearchProductDTO searchProductDTO,
                                     @RequestParam Integer pageNumber,
