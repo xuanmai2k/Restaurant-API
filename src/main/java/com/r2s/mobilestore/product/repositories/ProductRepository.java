@@ -23,15 +23,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "FROM Product p " +
             "INNER JOIN Category c ON p.category.id = c.id " +
             "INNER JOIN Manufacturer m ON p.manufacturer.id = m.id " +
-            "WHERE p.name LIKE %:keyword% " +
-            "OR p.productCode LIKE %:keyword% " +
-            "AND m.manufacturerName LIKE %:manufacturer% " +
-            "AND c.categoryName LIKE %:category%" )
+            "WHERE " +
+            "(:keyword = '' OR p.name LIKE %:keyword% OR p.productCode LIKE %:keyword%) " +
+            "AND (m.manufacturerName LIKE %:manufacturer% OR :manufacturer IS NULL) " +
+            "AND (c.categoryName LIKE %:category% OR :category IS NULL)" )
     Page<Product> searchProduct(@Param("keyword") String keyword,
                                 @Param("manufacturer") String manufacturer,
                                 @Param("category") String category,
                                 Pageable pageable);
-
 
     boolean existsByProductCode(String productCode);
 }
