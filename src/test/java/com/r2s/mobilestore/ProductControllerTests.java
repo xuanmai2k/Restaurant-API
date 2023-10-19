@@ -4,7 +4,6 @@ package com.r2s.mobilestore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.category.services.CategoryService;
-import com.r2s.mobilestore.product.controllers.ProductController;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
 import com.r2s.mobilestore.product.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
@@ -16,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -82,12 +80,12 @@ public class ProductControllerTests {
         when(categoryService.save(category)).thenReturn(category);
 
         List<Manufacturer> manufacturer = new ArrayList<>();
-        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
         manufacturer.add(0, manufacturer1);
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L,"ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         mockMvc.perform(post(endpoint)
@@ -96,6 +94,34 @@ public class ProductControllerTests {
                 .andExpect(status().isCreated())
                 .andDo(print());
     }
+
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    public void shouldCreateProductForbidden() throws Exception {
+        List<String> image = new ArrayList<>();
+        image.add("123.jpg");
+        image.add("456.jpg");
+
+        Category category = new Category(1L, "phone");
+        when(categoryService.save(category)).thenReturn(category);
+
+        List<Manufacturer> manufacturer = new ArrayList<>();
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
+        manufacturer.add(0, manufacturer1);
+
+        when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
+
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+                "silver", "new", manufacturer1, category, image);
+
+        mockMvc.perform(post(endpoint)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(product)))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
@@ -109,12 +135,12 @@ public class ProductControllerTests {
         when(categoryService.save(category)).thenReturn(category);
 
         List<Manufacturer> manufacturer = new ArrayList<>();
-        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
         manufacturer.add(0, manufacturer1);
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L,"ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         when(productService.getProductById(id)).thenReturn(Optional.of(product));
@@ -122,6 +148,7 @@ public class ProductControllerTests {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
@@ -147,12 +174,12 @@ public class ProductControllerTests {
         when(categoryService.save(category)).thenReturn(category);
 
         List<Manufacturer> manufacturer = new ArrayList<>();
-        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
         manufacturer.add(0, manufacturer1);
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L,"ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         when(productService.getProductById(id)).thenReturn(Optional.of(product));
@@ -160,6 +187,34 @@ public class ProductControllerTests {
                 .andExpect(status().isNoContent())
                 .andDo(print());
     }
+
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void shouldDeleteProductForbidden() throws Exception {
+        long id = 1L;
+        List<String> image = new ArrayList<>();
+        image.add("123.jpg");
+        image.add("456.jpg");
+
+        Category category = new Category(1L, "phone");
+        when(categoryService.save(category)).thenReturn(category);
+
+        List<Manufacturer> manufacturer = new ArrayList<>();
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
+        manufacturer.add(0, manufacturer1);
+
+        when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
+
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+                "silver", "new", manufacturer1, category, image);
+
+        when(productService.getProductById(id)).thenReturn(Optional.of(product));
+        mockMvc.perform(delete(getEndpoint, id))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
@@ -172,18 +227,18 @@ public class ProductControllerTests {
         when(categoryService.save(category)).thenReturn(category);
 
         List<Manufacturer> manufacturer = new ArrayList<>();
-        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
         manufacturer.add(0, manufacturer1);
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
         List<Product> productList = new ArrayList<>(Arrays.asList(
-                new Product(1L,"ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
-                "silver", "new", manufacturer1, category, image),
-                new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
-                "silver", "new", manufacturer1, category, image)));
+                new Product(1L, "ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                        "silver", "new", manufacturer1, category, image),
+                new Product(2L, "ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                        "silver", "new", manufacturer1, category, image)));
 
-        PageDTO pageDTO = new PageDTO(0,2);
+        PageDTO pageDTO = new PageDTO(0, 2);
 
         Page<Product> productPage = new PageImpl<>(productList);
 
@@ -193,6 +248,7 @@ public class ProductControllerTests {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
 
     @Test
     @WithMockUser(authorities = "ROLE_ADMIN")
@@ -206,15 +262,15 @@ public class ProductControllerTests {
         when(categoryService.save(category)).thenReturn(category);
 
         List<Manufacturer> manufacturer = new ArrayList<>();
-        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
         manufacturer.add(0, manufacturer1);
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L,"ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
-        Product updateProduct = new Product(1L,"ABCD1234", "iphone11", 1000.0, 100, "great", "64GB",
+        Product updateProduct = new Product(1L, "ABCD1234", "iphone11", 1000.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         when(productService.getProductById(eq(id))).thenReturn(Optional.of(product));
@@ -228,6 +284,40 @@ public class ProductControllerTests {
         assertEquals("iphone11", updateProduct.getName());
     }
 
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void updateProductForbidden() throws Exception {
+        long id = 1L;
+        List<String> image = new ArrayList<>();
+        image.add("123.jpg");
+        image.add("456.jpg");
+
+        Category category = new Category(1L, "phone");
+        when(categoryService.save(category)).thenReturn(category);
+
+        List<Manufacturer> manufacturer = new ArrayList<>();
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
+        manufacturer.add(0, manufacturer1);
+
+        when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
+
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+                "silver", "new", manufacturer1, category, image);
+
+        Product updateProduct = new Product(1L, "ABCD1234", "iphone11", 1000.0, 100, "great", "64GB",
+                "silver", "new", manufacturer1, category, image);
+
+        when(productService.getProductById(eq(id))).thenReturn(Optional.of(product));
+        when(productService.updateProduct(any(CreateProductDTO.class), eq(id))).thenReturn(updateProduct);
+
+        mockMvc.perform(put(getEndpoint, id, updateProduct).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateProduct)))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+
     @Test
     @WithMockUser(authorities = "ROLE_USER")
     void returnListOfProductsUsingSearch() throws Exception {
@@ -239,30 +329,31 @@ public class ProductControllerTests {
         when(categoryService.save(category)).thenReturn(category);
 
         List<Manufacturer> manufacturer = new ArrayList<>();
-        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
         manufacturer.add(0, manufacturer1);
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
         List<Product> productList = new ArrayList<>(Arrays.asList(
-                new Product(1L,"ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                new Product(1L, "ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image),
-                new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                new Product(2L, "ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image)));
 
         Page<Product> productPage = new PageImpl<>(productList);
 
-        PageDTO pageDTO = new PageDTO(0,2);
+        PageDTO pageDTO = new PageDTO(0, 2);
 
-        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","apple","phone",pageDTO);
+        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone", "apple", "phone", pageDTO);
 
         when(productService.search(searchProductDTO)).thenReturn(productPage);
         mockMvc.perform(get(endpoint + "/search")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(searchProductDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(searchProductDTO)))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
@@ -275,15 +366,15 @@ public class ProductControllerTests {
         when(categoryService.save(category)).thenReturn(category);
 
         List<Manufacturer> manufacturer = new ArrayList<>();
-        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
         manufacturer.add(0, manufacturer1);
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
         List<Product> productList = new ArrayList<>(Arrays.asList(
-                new Product(1L,"ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                new Product(1L, "ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image),
-                new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                new Product(2L, "ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image)));
 
         Integer pageNumber = 0;
@@ -291,9 +382,9 @@ public class ProductControllerTests {
 
         Page<Product> productPage = new PageImpl<>(productList);
 
-        PageDTO pageDTO = new PageDTO(0,2);
+        PageDTO pageDTO = new PageDTO(0, 2);
 
-        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","","phone",pageDTO);
+        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone", "", "phone", pageDTO);
 
         when(productService.search(searchProductDTO)).thenReturn(productPage);
         mockMvc.perform(get(endpoint + "/search")
@@ -302,6 +393,7 @@ public class ProductControllerTests {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
@@ -314,22 +406,22 @@ public class ProductControllerTests {
         when(categoryService.save(category)).thenReturn(category);
 
         List<Manufacturer> manufacturer = new ArrayList<>();
-        Manufacturer manufacturer1 = new Manufacturer(1L,"apple");
+        Manufacturer manufacturer1 = new Manufacturer(1L, "apple");
         manufacturer.add(0, manufacturer1);
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
         List<Product> productList = new ArrayList<>(Arrays.asList(
-                new Product(1L,"ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                new Product(1L, "ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image),
-                new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                new Product(2L, "ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image)));
 
         Page<Product> productPage = new PageImpl<>(productList);
 
-        PageDTO pageDTO = new PageDTO(0,2);
+        PageDTO pageDTO = new PageDTO(0, 2);
 
-        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","apple","", pageDTO);
+        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone", "apple", "", pageDTO);
 
         when(productService.search(searchProductDTO)).thenReturn(productPage);
         mockMvc.perform(get(endpoint + "/search")
@@ -338,4 +430,5 @@ public class ProductControllerTests {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
 }

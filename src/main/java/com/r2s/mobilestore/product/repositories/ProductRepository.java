@@ -26,7 +26,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "WHERE " +
             "(:keyword = '' OR p.name LIKE %:keyword% OR p.productCode LIKE %:keyword%) " +
             "AND (m.manufacturerName LIKE %:manufacturer% OR :manufacturer IS NULL) " +
-            "AND (c.categoryName LIKE %:category% OR :category IS NULL)" )
+            "AND (c.categoryName LIKE %:category% OR :category IS NULL)")
     Page<Product> searchProduct(@Param("keyword") String keyword,
                                 @Param("manufacturer") String manufacturer,
                                 @Param("category") String category,
