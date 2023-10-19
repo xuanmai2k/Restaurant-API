@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 /**
  * Custom response status
  *
@@ -22,7 +24,7 @@ public class SearchPromotionDTO {
     /**
      * Represents the expiration date.
      */
-    private String expireDate = null;
+    private LocalDate expireDate;
 
     /**
      * Represents discount available

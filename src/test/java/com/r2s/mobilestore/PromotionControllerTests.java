@@ -140,7 +140,7 @@ public class PromotionControllerTests {
 
         PageDTO pageDTO = new PageDTO(0, 2);
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", "2023-12-12",
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", expireDate,
                 true, 0, 100, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
@@ -194,7 +194,7 @@ public class PromotionControllerTests {
 
         PageDTO pageDTO = new PageDTO(0, 2);
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", "2023-12-12",
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", expireDate,
                 null, 0, 100, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);

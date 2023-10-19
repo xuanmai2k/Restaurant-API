@@ -1,6 +1,5 @@
 package com.r2s.mobilestore.promotion.controllers;
 
-import com.r2s.mobilestore.category.controllers.CategoryController;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
 import com.r2s.mobilestore.promotion.dtos.PageDTO;
@@ -195,6 +194,12 @@ public class PromotionController {
         }
     }
 
+    /**
+     * Build search promotion REST API
+     *
+     * @param searchPromotionDTO This is keyword
+     * @return http status
+     */
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestBody SearchPromotionDTO searchPromotionDTO) {

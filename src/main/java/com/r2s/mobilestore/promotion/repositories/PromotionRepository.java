@@ -20,41 +20,19 @@ import java.time.LocalDate;
 @Repository
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
 
-    @Query("SELECT p " +
-            "FROM Promotion p " +
-            "WHERE p.discountCode LIKE %:discountCode% " +
-            "AND p.expireDate >= :minExpireDate " +
-            "AND p.expireDate <= :maxExpireDate " +
-            "AND p.discountAvailable = :discountAvailable " +
-            "AND p.discount >= :minDiscount " +
-            "AND p.discount <= :maxDiscount")
+    @Query("SELECT p FROM Promotion p " +
+            "WHERE " +
+            "(:discountCode = '' OR p.discountCode LIKE %:discountCode% ) " +
+            "AND (p.discountAvailable = :discountAvailable OR :discountAvailable IS NULL) " +
+            "AND (p.expireDate = :expireDate OR :expireDate IS NULL) " +
+            "AND (p.discount >= :minDiscount OR :minDiscount IS NULL) " +
+            "AND (p.discount <= :maxDiscount OR :maxDiscount IS NULL)")
     Page<Promotion> searchPromotion(@Param("discountCode") String discountCode,
-                                    @Param("minExpireDate") LocalDate minExpireDate,
-                                    @Param("maxExpireDate") LocalDate maxExpireDate,
+                                    @Param("expireDate") LocalDate expireDate,
                                     @Param("discountAvailable") Boolean discountAvailable,
                                     @Param("minDiscount") Integer minDiscount,
                                     @Param("maxDiscount") Integer maxDiscount,
                                     Pageable pageable);
-
-    @Query("SELECT p " +
-            "FROM Promotion p " +
-            "WHERE p.discountCode LIKE %:discountCode% " +
-            "AND p.expireDate >= :minExpireDate " +
-            "AND p.expireDate <= :maxExpireDate " +
-            "AND p.discount >= :minDiscount " +
-            "AND p.discount <= :maxDiscount")
-    Page<Promotion> searchPromotionWithoutDiscountAvailable(@Param("discountCode") String discountCode,
-                                                            @Param("minExpireDate") LocalDate minExpireDate,
-                                                            @Param("maxExpireDate") LocalDate maxExpireDate,
-                                                            @Param("minDiscount") Integer minDiscount,
-                                                            @Param("maxDiscount") Integer maxDiscount,
-                                                            Pageable pageable);
-
-    @Query("SELECT MIN( p.expireDate ) FROM Promotion p ")
-    LocalDate findMinExpireDate();
-
-    @Query("SELECT MAX( p.expireDate ) FROM Promotion p")
-    LocalDate findMaxExpireDate();
 
     boolean existsByDiscountCode(String discountCode);
 }

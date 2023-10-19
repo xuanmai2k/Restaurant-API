@@ -5,7 +5,6 @@ import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import org.springframework.data.domain.Page;
 
-import java.text.ParseException;
 import java.util.Optional;
 
 /**
@@ -25,12 +24,12 @@ public interface PromotionService {
     public Page<Promotion> listAll(PageDTO pageDTO);
 
     /**
-     * Find promotion by discount code
+     * Find promotion by keyword
      *
-     * @param searchPromotionDTO This is discount code
+     * @param searchPromotionDTO This is keyword
      * @return List of promotions
      */
-    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO) throws ParseException;
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO);
 
     /**
      * This method is used to get a promotion base on id
