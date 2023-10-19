@@ -3,6 +3,7 @@ package com.r2s.mobilestore.product.controllers;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Product;
 import com.r2s.mobilestore.product.services.ProductService;
@@ -40,16 +41,14 @@ public class ProductController {
     /**
      * REST API methods for Retrieval operations
      *
-     * @param pageNumber This is number of page
-     * @param pageSize   This is size of page
+     * @param pageDTO This is a page
      * @return list all of products
      */
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping()
-    public ResponseEntity<?> getAllProducts(@RequestParam Integer pageNumber,
-                                            @RequestParam Integer pageSize) {
+    public ResponseEntity<?> getAllProducts(@RequestBody PageDTO pageDTO) {
         try {
-            Page<Product> productList = productService.getAllProducts(pageNumber, pageSize);
+            Page<Product> productList = productService.getAllProducts(pageDTO);
 
             //Not found
             if (productList.isEmpty()) {
@@ -77,7 +76,7 @@ public class ProductController {
      * @param id This is product id
      * @return a product
      */
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("{id}")
     public ResponseEntity<?> getProductById(@PathVariable Long id) {
         try {
@@ -193,17 +192,13 @@ public class ProductController {
      * Build search product REST API
      *
      * @param searchProductDTO There are keyword, category and manufacturer
-     * @param pageNumber   This is number of page
-     * @param pageSize     This is size of page
      * @return list of products
      */
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestBody SearchProductDTO searchProductDTO,
-                                    @RequestParam Integer pageNumber,
-                                    @RequestParam Integer pageSize) {
+    public ResponseEntity<?> search(@RequestBody SearchProductDTO searchProductDTO) {
         try {
-            Page<Product> productList = productService.search(searchProductDTO, pageNumber, pageSize);
+            Page<Product> productList = productService.search(searchProductDTO);
 
             //Not found
             if (productList.isEmpty()) {

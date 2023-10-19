@@ -3,6 +3,7 @@ package com.r2s.mobilestore.product.services;
 import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.category.repositories.CategoryRepository;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Manufacturer;
 import com.r2s.mobilestore.product.entities.Product;
@@ -59,13 +60,12 @@ public class ProductServiceImpl implements ProductService {
     /**
      * This method is used to list all products
      *
-     * @param pageNumber This is number of page
-     * @param pageSize   This is size of page
+     * @param pageDTO This is a page
      * @return list of products
      */
     @Override
-    public Page<Product> getAllProducts(int pageNumber, int pageSize) {
-        return productRepository.findAll(PageRequest.of(pageNumber, pageSize));
+    public Page<Product> getAllProducts(PageDTO pageDTO) {
+        return productRepository.findAll(PageRequest.of(pageDTO.getPageNumber(), pageDTO.getPageSize()));
     }
 
     /**
@@ -309,24 +309,22 @@ public class ProductServiceImpl implements ProductService {
      *
      * @param productCode This is product code
      */
-    public Boolean existProductCode(String productCode){
+    public Boolean existProductCode(String productCode) {
         return productRepository.existsByProductCode(productCode);
     }
 
     /**
-     * This method is used to search  product
+     * This method is used to search product
      *
      * @param searchProductDTO There are keyword, category and manufacturer
-     * @param pageNumber   This is number of page
-     * @param pageSize     This is size of page
      * @return list of products
      */
     @Override
-    public Page<Product> search(SearchProductDTO searchProductDTO, int pageNumber, int pageSize) {
+    public Page<Product> search(SearchProductDTO searchProductDTO) {
         return productRepository.searchProduct(
                 searchProductDTO.getKeyword(),
                 searchProductDTO.getManufacturer(),
                 searchProductDTO.getCategory(),
-                PageRequest.of(pageNumber, pageSize));
+                PageRequest.of(searchProductDTO.getPageDTO().getPageNumber(), searchProductDTO.getPageDTO().getPageSize()));
     }
 }

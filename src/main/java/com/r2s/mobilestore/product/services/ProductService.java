@@ -1,6 +1,7 @@
 package com.r2s.mobilestore.product.services;
 
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Product;
 import org.springframework.data.domain.Page;
@@ -13,11 +14,10 @@ public interface ProductService {
     /**
      * This method is used to list all products
      *
-     * @param pageNumber This is number of page
-     * @param pageSize   This is size of page
+     * @param pageDTO This is a page
      * @return list of products
      */
-    public Page<Product> getAllProducts(int pageNumber, int pageSize);
+    public Page<Product> getAllProducts(PageDTO pageDTO);
 
     /**
      * This method is used to get a product base on id
@@ -63,10 +63,8 @@ public interface ProductService {
      * This method is used to search product
      *
      * @param searchProductDTO There are keyword, category and manufacturer
-     * @param pageNumber   This is number of page
-     * @param pageSize     This is size of page
      * @return list of products
      */
-    public Page<Product> search(SearchProductDTO searchProductDTO, int pageNumber, int pageSize);
+    public Page<Product> search(SearchProductDTO searchProductDTO);
 
 }

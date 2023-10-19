@@ -28,4 +28,9 @@ public class SearchProductDTO {
      * Represents the product’s category.
      */
     private String category = "";
+
+    /**
+     * Represents the product’s page.
+     */
+    private PageDTO pageDTO;
 }

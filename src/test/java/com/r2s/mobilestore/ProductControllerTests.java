@@ -6,6 +6,7 @@ import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.category.services.CategoryService;
 import com.r2s.mobilestore.product.controllers.ProductController;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Manufacturer;
 import com.r2s.mobilestore.product.entities.Product;
@@ -174,15 +175,13 @@ public class ProductControllerTests {
                 new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image)));
 
-        Integer pageNumber = 0;
-        Integer pageSize = 2;
+        PageDTO pageDTO = new PageDTO(0,2);
 
         Page<Product> productPage = new PageImpl<>(productList);
 
-        when(productService.getAllProducts(pageNumber, pageSize)).thenReturn(productPage);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2"))
+        when(productService.getAllProducts(pageDTO)).thenReturn(productPage);
+        mockMvc.perform(get(endpoint).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(pageDTO)))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -241,17 +240,14 @@ public class ProductControllerTests {
                 new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image)));
 
-        Integer pageNumber = 0;
-        Integer pageSize = 2;
-
         Page<Product> productPage = new PageImpl<>(productList);
 
-        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","apple","phone");
+        PageDTO pageDTO = new PageDTO(0,2);
 
-        when(productService.search(searchProductDTO,pageNumber, pageSize)).thenReturn(productPage);
+        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","apple","phone",pageDTO);
+
+        when(productService.search(searchProductDTO)).thenReturn(productPage);
         mockMvc.perform(get(endpoint + "/search")
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(searchProductDTO)))
                 .andExpect(status().isOk())
@@ -284,12 +280,12 @@ public class ProductControllerTests {
 
         Page<Product> productPage = new PageImpl<>(productList);
 
-        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","","phone");
+        PageDTO pageDTO = new PageDTO(0,2);
 
-        when(productService.search(searchProductDTO,pageNumber, pageSize)).thenReturn(productPage);
+        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","","phone",pageDTO);
+
+        when(productService.search(searchProductDTO)).thenReturn(productPage);
         mockMvc.perform(get(endpoint + "/search")
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(searchProductDTO)))
                 .andExpect(status().isOk())
@@ -317,17 +313,14 @@ public class ProductControllerTests {
                 new Product(2L,"ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image)));
 
-        Integer pageNumber = 0;
-        Integer pageSize = 2;
-
         Page<Product> productPage = new PageImpl<>(productList);
 
-        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","apple","");
+        PageDTO pageDTO = new PageDTO(0,2);
 
-        when(productService.search(searchProductDTO,pageNumber, pageSize)).thenReturn(productPage);
+        SearchProductDTO searchProductDTO = new SearchProductDTO("iphone","apple","", pageDTO);
+
+        when(productService.search(searchProductDTO)).thenReturn(productPage);
         mockMvc.perform(get(endpoint + "/search")
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(searchProductDTO)))
                 .andExpect(status().isOk())
