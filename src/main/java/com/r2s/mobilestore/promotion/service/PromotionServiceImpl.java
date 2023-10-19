@@ -1,5 +1,6 @@
 package com.r2s.mobilestore.promotion.service;
 
+import com.r2s.mobilestore.promotion.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.repositories.PromotionRepository;
@@ -32,25 +33,22 @@ public class PromotionServiceImpl implements PromotionService {
     /**
      * This method is used to list all promotions
      *
-     * @param pageNumber This is number of page
-     * @param pageSize   This is size of page
+     * @param pageDTO   This is a page
      * @return list all of promotions
      */
     @Override
-    public Page<Promotion> listAll(int pageNumber, int pageSize) {
-        return promotionRepository.findAll(PageRequest.of(pageNumber, pageSize));
+    public Page<Promotion> listAll(PageDTO pageDTO) {
+        return promotionRepository.findAll(PageRequest.of(pageDTO.getPageNumber(), pageDTO.getPageSize()));
     }
 
     /**
      * Get all promotions containing discount code
      *
      * @param searchPromotionDTO This is discount code of promotion
-     * @param pageNumber         This is number of page
-     * @param pageSize           This is size of page
      * @return List of promotions
      */
     @Override
-    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) {
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO) {
         //get max and min of expire date
         LocalDate minExpireDate = promotionRepository.findMinExpireDate();
         LocalDate maxExpireDate = promotionRepository.findMaxExpireDate();
@@ -71,7 +69,7 @@ public class PromotionServiceImpl implements PromotionService {
                     searchPromotionDTO.getDiscountAvailable(),
                     searchPromotionDTO.getMinDiscount(),
                     searchPromotionDTO.getMaxDiscount(),
-                    PageRequest.of(pageNumber, pageSize));
+                    PageRequest.of(searchPromotionDTO.getPageDTO().getPageNumber(), searchPromotionDTO.getPageDTO().getPageSize()));
         } else {
 
             //discount available is null
@@ -81,7 +79,7 @@ public class PromotionServiceImpl implements PromotionService {
                     date == null ? maxExpireDate : date,
                     searchPromotionDTO.getMinDiscount(),
                     searchPromotionDTO.getMaxDiscount(),
-                    PageRequest.of(pageNumber, pageSize));
+                    PageRequest.of(searchPromotionDTO.getPageDTO().getPageNumber(), searchPromotionDTO.getPageDTO().getPageSize()));
         }
     }
 

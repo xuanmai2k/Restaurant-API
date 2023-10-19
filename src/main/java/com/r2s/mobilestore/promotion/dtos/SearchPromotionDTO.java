@@ -38,4 +38,9 @@ public class SearchPromotionDTO {
      * Represents max discount
      */
     private Integer maxDiscount = 100;
+
+    /**
+     * Represents page
+     */
+    private PageDTO pageDTO;
 }

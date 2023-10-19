@@ -3,6 +3,7 @@ package com.r2s.mobilestore.promotion.controllers;
 import com.r2s.mobilestore.category.controllers.CategoryController;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
+import com.r2s.mobilestore.promotion.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.service.PromotionService;
@@ -38,22 +39,19 @@ public class PromotionController {
     /**
      * Logging in Spring Boot
      */
-    Logger logger = LoggerFactory.getLogger(CategoryController.class);
+    Logger logger = LoggerFactory.getLogger(PromotionController.class);
 
     /**
      * REST API methods for Retrieval operations
      *
-     * @param searchPromotionDTO This is discount code
-     * @param pageNumber         This is number of page
-     * @param pageSize           This is size of page
+     * @param pageDTO This is a page
      * @return list all of promotions
      */
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping
-    public ResponseEntity<?> getAllPromotions(@RequestParam Integer pageNumber,
-                                              @RequestParam Integer pageSize) {
+    public ResponseEntity<?> getAllPromotions(@RequestBody PageDTO pageDTO) {
         try {
-            Page<Promotion> promotionList = promotionService.listAll(pageNumber, pageSize);
+            Page<Promotion> promotionList = promotionService.listAll(pageDTO);
 
             //Not empty
             if (!promotionList.isEmpty()) {
@@ -78,7 +76,7 @@ public class PromotionController {
      * @param id This is promotion id
      * @return a promotion
      */
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("{id}")
     public ResponseEntity<?> getPromotionById(@PathVariable Long id) {
         try {
@@ -197,6 +195,7 @@ public class PromotionController {
         }
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestBody SearchPromotionDTO searchPromotionDTO) {
         try {

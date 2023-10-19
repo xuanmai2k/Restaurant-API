@@ -1,5 +1,6 @@
 package com.r2s.mobilestore.promotion.service;
 
+import com.r2s.mobilestore.promotion.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import org.springframework.data.domain.Page;
@@ -18,21 +19,18 @@ public interface PromotionService {
     /**
      * This method is used to list all promotions
      *
-     * @param pageNumber This is number of page
-     * @param pageSize   This is size of page
+     * @param pageDTO This is a page
      * @return list all of promotions
      */
-    public Page<Promotion> listAll(int pageNumber, int pageSize);
+    public Page<Promotion> listAll(PageDTO pageDTO);
 
     /**
      * Find promotion by discount code
      *
      * @param searchPromotionDTO This is discount code
-     * @param pageNumber         This is number of page
-     * @param pageSize           This is size of page
      * @return List of promotions
      */
-    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO, int pageNumber, int pageSize) throws ParseException;
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO) throws ParseException;
 
     /**
      * This method is used to get a promotion base on id

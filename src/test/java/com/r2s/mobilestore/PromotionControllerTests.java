@@ -3,6 +3,7 @@ package com.r2s.mobilestore;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2s.mobilestore.promotion.controllers.PromotionController;
+import com.r2s.mobilestore.promotion.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.service.PromotionService;
@@ -112,10 +113,11 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        when(promotionService.listAll(0, 2)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2"))
+        PageDTO pageDTO = new PageDTO(0, 2);
+
+        when(promotionService.listAll(pageDTO)).thenReturn(promotions);
+        mockMvc.perform(get(endpoint).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(pageDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andDo(print());
@@ -136,14 +138,13 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", "2023-12-12",
-                true, 0, 100);
+        PageDTO pageDTO = new PageDTO(0, 2);
 
-        when(promotionService.search(searchPromotionDTO, 0, 2)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
-                        .contentType(MediaType.APPLICATION_JSON)
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", "2023-12-12",
+                true, 0, 100, pageDTO);
+
+        when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
+        mockMvc.perform(get(endpoint + "/search" ).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(searchPromotionDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
@@ -164,14 +165,13 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
-                true, 0, 100);
+        PageDTO pageDTO = new PageDTO(0, 2);
 
-        when(promotionService.search(searchPromotionDTO, 0, 2)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
-                        .contentType(MediaType.APPLICATION_JSON)
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
+                true, 0, 100, pageDTO);
+
+        when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
+        mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(searchPromotionDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
@@ -192,14 +192,13 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", "2023-12-12",
-                null, 0, 100);
+        PageDTO pageDTO = new PageDTO(0, 2);
 
-        when(promotionService.search(searchPromotionDTO, 0, 2)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
-                        .contentType(MediaType.APPLICATION_JSON)
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", "2023-12-12",
+                null, 0, 100, pageDTO);
+
+        when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
+        mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(searchPromotionDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
@@ -220,14 +219,13 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
-                null, 0, 100);
+        PageDTO pageDTO = new PageDTO(0, 2);
 
-        when(promotionService.search(searchPromotionDTO, 0, 2)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
-                        .contentType(MediaType.APPLICATION_JSON)
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
+                null, 0, 100, pageDTO);
+
+        when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
+        mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(searchPromotionDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
@@ -241,14 +239,13 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
-                null, 0, 100);
+        PageDTO pageDTO = new PageDTO(0, 2);
 
-        when(promotionService.search(searchPromotionDTO, 0, 2)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint)
-                        .param("pageNumber", "0")
-                        .param("pageSize", "2")
-                        .contentType(MediaType.APPLICATION_JSON)
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
+                null, 0, 100, pageDTO);
+
+        when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
+        mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(searchPromotionDTO)))
                 .andExpect(status().isNoContent())
                 .andDo(print());
