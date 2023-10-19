@@ -2,7 +2,6 @@ package com.r2s.mobilestore;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.r2s.mobilestore.promotion.controllers.PromotionController;
 import com.r2s.mobilestore.promotion.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
@@ -11,11 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 
@@ -41,9 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2023-10-04
  */
 
-
-@WebMvcTest(PromotionController.class)
-@AutoConfigureMockMvc(addFilters = false) //Ignore spring security
+@SpringBootTest
+@AutoConfigureMockMvc
 public class PromotionControllerTests {
     @MockBean
     private PromotionService promotionService;
@@ -61,6 +60,7 @@ public class PromotionControllerTests {
     private String getEndpoint;
 
     @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void shouldCreatePromotion() throws Exception {
         LocalDate expireDate = LocalDate.parse("2023-12-12");
 
@@ -73,7 +73,24 @@ public class PromotionControllerTests {
                 .andDo(print());
     }
 
+
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void shouldCreatePromotionForbidden() throws Exception {
+        LocalDate expireDate = LocalDate.parse("2023-12-12");
+
+        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
+                expireDate, "junit test", true);
+
+        mockMvc.perform(post(endpoint).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(promotion)))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+
+    @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnPromotionById() throws Exception {
         Long id = 1L;
         LocalDate expireDate = LocalDate.parse("2023-12-12");
@@ -90,6 +107,7 @@ public class PromotionControllerTests {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnNotFoundPromotion() throws Exception {
         long id = 1L;
 
@@ -99,7 +117,9 @@ public class PromotionControllerTests {
                 .andDo(print());
     }
 
+
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnPageOfPromotions() throws Exception {
 
         LocalDate expireDate = LocalDate.parse("2023-12-12");
@@ -125,6 +145,7 @@ public class PromotionControllerTests {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnPageOfPromotionUsingFullFilter() throws Exception {
 
         LocalDate expireDate = LocalDate.parse("2023-12-12");
@@ -144,14 +165,16 @@ public class PromotionControllerTests {
                 true, 0, 100, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint + "/search" ).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(searchPromotionDTO)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andDo(print());
     }
 
+
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnPageOfPromotionUsingFilterWithoutExpireDate() throws Exception {
 
         LocalDate expireDate = LocalDate.parse("2023-12-12");
@@ -178,7 +201,9 @@ public class PromotionControllerTests {
                 .andDo(print());
     }
 
+
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnPageOfPromotionUsingFilterWithoutDiscountAvailable() throws Exception {
 
         LocalDate expireDate = LocalDate.parse("2023-12-12");
@@ -205,7 +230,9 @@ public class PromotionControllerTests {
                 .andDo(print());
     }
 
+
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnPageOfPromotionUsingFilterWithoutDiscountAvailableAndExpireDate() throws Exception {
 
         LocalDate expireDate = LocalDate.parse("2023-12-12");
@@ -232,7 +259,9 @@ public class PromotionControllerTests {
                 .andDo(print());
     }
 
+
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnNoContentPromotionUsingFilterNoContent() throws Exception {
 
         List<Promotion> promotionList = Arrays.asList();
@@ -251,7 +280,9 @@ public class PromotionControllerTests {
                 .andDo(print());
     }
 
+
     @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void shouldUpdatePromotion() throws Exception {
         Long id = 1L;
 
@@ -278,6 +309,30 @@ public class PromotionControllerTests {
 
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void shouldUpdatePromotionForbidden() throws Exception {
+        Long id = 1L;
+
+        LocalDate expireDate = LocalDate.parse("2023-12-12");
+
+        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
+                expireDate, "junit test", true);
+        Promotion updatePromotion = new Promotion(2, "888abc", 2000, 40.0, 200,
+                expireDate, "junit test", false);
+
+        when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
+        when(promotionService.save(any(Promotion.class))).thenReturn(updatePromotion);
+
+        mockMvc.perform(put(getEndpoint, id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatePromotion)))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void shouldDeletePromotion() throws Exception {
         Long id = 1L;
         LocalDate expireDate = LocalDate.parse("2023-12-12");
@@ -293,7 +348,27 @@ public class PromotionControllerTests {
                 .andDo(print());
     }
 
+
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
+    void shouldDeletePromotionForbidden() throws Exception {
+        Long id = 1L;
+        LocalDate expireDate = LocalDate.parse("2023-12-12");
+
+        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
+                expireDate, "junit test", true);
+
+        when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
+
+        doNothing().when(promotionService).delete(id);
+        mockMvc.perform(delete(getEndpoint, id))
+                .andExpect(status().isForbidden())
+                .andDo(print());
+    }
+
+
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void shouldDeleteNotFound() throws Exception {
         Long id = 2L;
 
@@ -302,4 +377,5 @@ public class PromotionControllerTests {
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }
+
 }
