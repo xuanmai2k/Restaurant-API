@@ -50,18 +50,10 @@ public class PromotionController {
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping
-    public ResponseEntity<?> getAllPromotions(@RequestBody(required = false) SearchPromotionDTO searchPromotionDTO,
-                                              @RequestParam Integer pageNumber,
+    public ResponseEntity<?> getAllPromotions(@RequestParam Integer pageNumber,
                                               @RequestParam Integer pageSize) {
         try {
-            Page<Promotion> promotionList;
-            if (searchPromotionDTO == null) {
-                //get All List
-                promotionList = promotionService.listAll(pageNumber, pageSize);
-            } else {
-                //Filter
-                promotionList = promotionService.search(searchPromotionDTO, pageNumber, pageSize);
-            }
+            Page<Promotion> promotionList = promotionService.listAll(pageNumber, pageSize);
 
             //Not empty
             if (!promotionList.isEmpty()) {
@@ -200,6 +192,30 @@ public class PromotionController {
             logger.info(ex.getMessage());
 
             // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> search(@RequestBody SearchPromotionDTO searchPromotionDTO) {
+        try {
+            Page<Promotion> promotionList = promotionService.search(searchPromotionDTO);
+
+            //Not found
+            if (promotionList.isEmpty()) {
+                //No content
+                body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+                return new ResponseEntity<>(body, HttpStatus.NO_CONTENT);
+            }
+
+            //Found
+            return new ResponseEntity<>(promotionList, HttpStatus.OK);
+
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            //Failed
             body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
             return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
