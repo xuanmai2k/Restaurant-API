@@ -17,10 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -45,8 +47,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 2023-10-10
  */
 
-@WebMvcTest(ProductController.class)
-@AutoConfigureMockMvc(addFilters = false) //Ignore spring security
+@SpringBootTest
+@AutoConfigureMockMvc
 public class ProductControllerTests {
     @Autowired
     protected MockMvc mockMvc;
@@ -70,6 +72,7 @@ public class ProductControllerTests {
     private ManufacturerRepository manufacturerRepository;
 
     @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     public void shouldCreateProduct() throws Exception {
         List<String> image = new ArrayList<>();
         image.add("123.jpg");
@@ -95,6 +98,7 @@ public class ProductControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void getProductById() throws Exception {
         long id = 1L;
         List<String> image = new ArrayList<>();
@@ -120,6 +124,7 @@ public class ProductControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void returnNotFoundProductById() throws Exception {
         long id = 1L;
 
@@ -129,7 +134,9 @@ public class ProductControllerTests {
                 .andDo(print());
     }
 
+
     @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void shouldDeleteProduct() throws Exception {
         long id = 1L;
         List<String> image = new ArrayList<>();
@@ -155,6 +162,7 @@ public class ProductControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void returnListOfProducts() throws Exception {
         List<String> image = new ArrayList<>();
         image.add("123.jpg");
@@ -187,6 +195,7 @@ public class ProductControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
     void updateProduct() throws Exception {
         long id = 1L;
         List<String> image = new ArrayList<>();
@@ -220,6 +229,7 @@ public class ProductControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void returnListOfProductsUsingSearch() throws Exception {
         List<String> image = new ArrayList<>();
         image.add("123.jpg");
@@ -255,6 +265,7 @@ public class ProductControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void returnListOfProductsUsingSearchWithoutManufacturer() throws Exception {
         List<String> image = new ArrayList<>();
         image.add("123.jpg");
@@ -293,6 +304,7 @@ public class ProductControllerTests {
     }
 
     @Test
+    @WithMockUser(authorities = "ROLE_USER")
     void returnListOfProductsUsingSearchWithoutCategory() throws Exception {
         List<String> image = new ArrayList<>();
         image.add("123.jpg");
