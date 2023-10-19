@@ -17,6 +17,7 @@ user:
   user: /users
   create: /createUser
   login: /login
+  search: /search
   change-password: /change-password
 
 address:

@@ -74,7 +74,7 @@ public class User implements UserDetails {
     }
 
     public String getUsername() {
-        return this.fullName;
+        return this.email;
     }
 
     @Override

@@ -1,9 +1,8 @@
-package com.r2s.mobilestore.user.services.Impl;
+package com.r2s.mobilestore.user.services;
 
 import com.r2s.mobilestore.user.entities.Address;
 import com.r2s.mobilestore.user.entities.User;
 import com.r2s.mobilestore.user.repositories.AddressRepository;
-import com.r2s.mobilestore.user.services.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,19 +17,8 @@ import java.util.Optional;
  */
 @Service
 public class AddressServiceImpl implements AddressService {
-
     @Autowired
     private AddressRepository addressRepository;
-
-    /**
-     * This method is used to list all address
-     *
-     * @return list of addresses
-     */
-    @Override
-    public List<Address> getAllAddresses() {
-        return addressRepository.findAll();
-    }
 
     /**
      * This method is used to get addresses base on id
@@ -92,5 +80,15 @@ public class AddressServiceImpl implements AddressService {
 
             addressRepository.saveAll(defaultAddresses);
         }
+    }
+
+    /**
+     * This method is used to get Addresses By UserId
+     *
+     * @param userId This is userId
+     */
+    @Override
+    public List<Address> getAddressesByUserId(Long userId) {
+        return addressRepository.findByUserId(userId);
     }
 }

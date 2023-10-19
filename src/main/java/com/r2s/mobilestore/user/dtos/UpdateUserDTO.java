@@ -14,7 +14,6 @@ import java.time.LocalDate;
 public class UpdateUserDTO {
     private String fullName;
     private String phoneNumber;
-    private String email;
     private String gender;
     private LocalDate dateOfBirth;
 }

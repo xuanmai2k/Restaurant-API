@@ -45,7 +45,7 @@ import java.util.Locale;
  * @since 2023-10-03
  */
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {

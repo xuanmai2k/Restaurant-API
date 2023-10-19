@@ -1,7 +1,14 @@
 package com.r2s.mobilestore.user.services;
 
+import com.nimbusds.jose.shaded.gson.internal.LinkedTreeMap;
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.user.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,4 +72,26 @@ public interface UserService {
      */
     Optional<User> getUserById(Long userId);
 
+    /**
+     * This method is used to get all user
+     *
+     * @return user list
+     */
+    Page<User> getAllUsers(PageDTO pageDTO);
+
+    /**
+     * This method is used to delete a user base on id
+     *
+     * @param id This is userId
+     */
+    void deleteUserById(Long id);
+
+    /**
+     * Searches for users matching the provided search term with pagination.
+     *
+     * @param pageDTO     The PageDTO containing pagination information (pageNumber, pageSize).
+     * @param searchTerm  The search term to filter users by (can be a name, email, or phone number).
+     * @return            A Page of User entities that match the search criteria.
+     */
+    Page<User> searchUsersWithPagination(PageDTO pageDTO, String searchTerm);
 }

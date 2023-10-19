@@ -17,6 +17,12 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
+/**
+ * Represents JwtTokenUtil
+ *
+ * @author KhanhBD
+ * @since 2023-10-03
+ */
 @Component
 public class JwtTokenUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtTokenUtil.class);
@@ -37,10 +43,12 @@ public class JwtTokenUtil {
                 .issuer(Constants.R2S)
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(Constants.EXPIRE_DURATION))
-                .subject(format("%s,%s", user.getId(), user.getUsername()))
+                .subject(format("%s,%s", user.getId(), user.getEmail()))
                 .claim("roles", scope)
+                .claim("id", user.getId())
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
+
 }

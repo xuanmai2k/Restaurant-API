@@ -13,13 +13,6 @@ import java.util.Optional;
  */
 public interface AddressService {
     /**
-     * This method is used to list all address
-     *
-     * @return list of addresses
-     */
-    List<Address> getAllAddresses();
-
-    /**
      * This method is used to get addresses base on id
      *
      * @param id This is address id
@@ -55,4 +48,11 @@ public interface AddressService {
      * @param userId This is userId
      */
     void updateDefaultAddressesToFalse(Long userId);
+
+    /**
+     * This method is used to get Addresses By UserId
+     *
+     * @param id This is userId
+     */
+    List<Address> getAddressesByUserId(Long id);
 }

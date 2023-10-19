@@ -1,12 +1,15 @@
-package com.r2s.mobilestore.user.services.Impl;
+package com.r2s.mobilestore.user.services;
 
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.user.entities.User;
 import com.r2s.mobilestore.user.repositories.OTPRepository;
 import com.r2s.mobilestore.user.repositories.UserRepository;
-import com.r2s.mobilestore.user.services.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -102,4 +105,47 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUserById(Long userId) {
         return userRepository.findUserById(userId);
     }
+
+    /**
+     * This method is used to get all user
+     *
+     * @return user list
+     */
+    @Override
+    public Page<User> getAllUsers(PageDTO pageDTO) {
+        return userRepository.findAll(PageRequest.of(pageDTO.getPageNumber(), pageDTO.getPageSize()));
+    }
+
+    /**
+     * This method is used to delete a user base on id
+     *
+     * @param userId This is userId
+     */
+    @Override
+    public void deleteUserById(Long userId) {
+        userRepository.deleteById(userId);
+    }
+
+    /**
+     * Searches for users matching the provided search term with pagination.
+     *
+     * @param pageDTO     The PageDTO containing pagination information (pageNumber, pageSize).
+     * @param searchTerm  The search term to filter users by (can be a name, email, or phone number).
+     * @return            A Page of User entities that match the search criteria.
+     */
+    @Override
+    public Page<User> searchUsersWithPagination(PageDTO pageDTO, String searchTerm) {
+        // Extract page number and page size from PageDTO
+        int pageNumber = pageDTO.getPageNumber();
+        int pageSize = pageDTO.getPageSize();
+
+        // Create a pageable object for pagination
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        // Use the UserRepository to perform a case-insensitive search based on various user fields
+        return userRepository
+                .searchUsersWithPagination(
+                searchTerm, pageable);
+    }
+
 }

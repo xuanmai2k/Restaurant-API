@@ -1,15 +1,19 @@
 package com.r2s.mobilestore.user.controllers;
 
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
+import com.r2s.mobilestore.security.JwtTokenUtil;
 import com.r2s.mobilestore.user.dtos.ChangePasswordDTO;
 import com.r2s.mobilestore.user.dtos.EmailDTO;
 import com.r2s.mobilestore.user.dtos.RegisterDTO;
 import com.r2s.mobilestore.user.dtos.UpdateUserDTO;
+import com.r2s.mobilestore.user.entities.Address;
 import com.r2s.mobilestore.user.entities.Role;
 import com.r2s.mobilestore.user.entities.User;
 import com.r2s.mobilestore.user.models.ERole;
 import com.r2s.mobilestore.user.repositories.RoleRepository;
+import com.r2s.mobilestore.user.services.AddressService;
 import com.r2s.mobilestore.user.services.EmailService;
 import com.r2s.mobilestore.user.services.OTPService;
 import com.r2s.mobilestore.user.services.UserService;
@@ -21,8 +25,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -72,6 +78,9 @@ public class UserController {
      */
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    @Autowired
+    JwtTokenUtil jwtUtil;
+
     private final AuthenticationManager authManager;
 
     @Autowired
@@ -85,6 +94,9 @@ public class UserController {
 
     @Autowired
     private OTPService otpService;
+
+    @Autowired
+    private AddressService addressService;
 
     private final ResponseDTO body = ResponseDTO.getInstance();
 
@@ -125,6 +137,7 @@ public class UserController {
      * @return user is updated
      */
     @PutMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.getClaims().get(\"id\")")
     public ResponseEntity<?> updateUser(@PathVariable long id, @RequestBody UpdateUserDTO updateUserDTO) {
         try {
             Optional<User> updateUser = userService.get(id);
@@ -136,7 +149,6 @@ public class UserController {
                 // Update new user
                 user.setFullName(updateUserDTO.getFullName());
                 user.setPhoneNumber(updateUserDTO.getPhoneNumber());
-                user.setEmail(updateUserDTO.getEmail());
                 user.setGender(updateUserDTO.getGender());
                 user.setDateOfBirth(updateUserDTO.getDateOfBirth());
                 user.setModifiedAt(LocalDateTime.now());
@@ -155,7 +167,6 @@ public class UserController {
             return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     /**
      * Build send Otp when user register
@@ -300,6 +311,107 @@ public class UserController {
             logger.info(ex.getMessage());
 
             // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Build get All User
+     *
+     * @param pageDTO This is PageDTO
+     * @return status and User list
+     */
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> getAllUsers(@ModelAttribute PageDTO pageDTO) {
+        try {
+            // Retrieve a paginated list of users based on the provided PageDTO
+            Page<User> users = userService.getAllUsers(pageDTO);
+
+            if (!users.isEmpty()) {
+                // Return a response with the list of users and an OK status code if there are results.
+                return new ResponseEntity<>(users, HttpStatus.OK);
+            }
+
+            // Return a response with a NO_CONTENT status code if there are no results.
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            // Log an error message if an exception occurs during processing.
+            logger.info(ex.getMessage());
+
+            // Create a failure response with the appropriate status and return it in case of an error.
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    /**
+     * Build delete user by id
+     *
+     * @param id This is user id
+     * @return status delete user
+     */
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
+        try {
+            // Step 1: Get a list of user addresses
+            List<Address> userAddresses = addressService.getAddressesByUserId(id);
+
+            // Step 2: Delete all addresses related to the user
+            for (Address address : userAddresses) {
+                addressService.deleteAddress(address.getId());
+            }
+
+            // Step 3: Delete user (user)
+            userService.deleteUserById(id);
+
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Build searchUsers by searchTerm
+     *
+     * @param pageDTO This is PageDTO
+     * @param searchTerm This is fullName or Phone number or email
+     * @return list User base on searchTerm
+     */
+    @GetMapping("${user.search}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> searchUsers(@ModelAttribute PageDTO pageDTO,
+                                         @RequestParam(name = "searchTerm", required = false) String searchTerm) {
+        try {
+            Page<User> users;
+
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                // Search users with pagination if searchTerm is not empty
+                users = userService.searchUsersWithPagination(pageDTO, searchTerm);
+            } else {
+                // Get all users if searchTerm is empty
+                users = userService.getAllUsers(pageDTO);
+            }
+
+            if (!users.isEmpty()) {
+                // Return the list of users if there are results
+                return new ResponseEntity<>(users, HttpStatus.OK);
+            }
+
+            // Return a NO_CONTENT status code if there are no results
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            // Log an error message if an exception occurs
+            logger.info(ex.getMessage());
+
+            // Return an error response if processing fails
             body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
             return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }

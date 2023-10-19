@@ -118,6 +118,32 @@ public class AddressController {
     }
 
     /**
+     * Build get Address by id
+     *
+     * @param id This is id
+     * @return status and Address base on user id
+     */
+    @GetMapping("{id}")
+    public ResponseEntity<?> getAddressesById(@PathVariable Long id) {
+        try {
+            Address existingAddress = addressService.getAddressById(id).orElse(null);
+
+            if (existingAddress == null) {
+                body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+                return new ResponseEntity<>(body, HttpStatus.NO_CONTENT);
+            }
+
+            return new ResponseEntity<>(existingAddress, HttpStatus.OK);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
      * Build add Address by user id
      *
      * @param addressId This is address id

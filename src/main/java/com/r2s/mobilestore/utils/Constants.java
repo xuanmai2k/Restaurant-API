@@ -42,10 +42,10 @@ public class Constants {
     public static final String ROLE_NOT_FOUND = "role.notFound";
     //====== 2023/09/05 kyle END ======//
 
-    //====== 2023/10/04 KhanhBD START ======//
+    //====== 2023/10/19 KhanhBD START ======//
     public static final String EMAIL_MESSAGE = "email.message";
     public static final String EMAIL_SUBJECT = "email.subject";
     public static final String EMAIL_NOT_FOUND = "email.notFound";
     public static final String R2S = "r2s";
-    //====== 2023/10/04 KhanhBD END ======//
+    //====== 2023/10/19 KhanhBD END ======//
 }
