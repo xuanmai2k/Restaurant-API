@@ -100,6 +100,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+
 		<!-- ADD 2023/10/04 KhanhBD END -->
 	</dependencies>
 	<build>
