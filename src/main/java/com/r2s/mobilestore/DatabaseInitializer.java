@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -53,8 +54,10 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
 
             User admin = new User();
             admin.setEmail("admin@gmail.com");
-            admin.setUsername("admin");
+            admin.setFullName("admin");
             admin.setPassword(passwordEncoder.encode("admin")); // Encrypt password
+            admin.setCreatedAt(LocalDateTime.now());
+            admin.setModifiedAt(LocalDateTime.now());
 
             Set<Role> adminRoles = new HashSet<>();
             adminRoles.add(roleRepository.findByName(ERole.ROLE_ADMIN.toString()).orElseThrow());

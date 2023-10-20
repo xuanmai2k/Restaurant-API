@@ -1,4 +1,4 @@
-package com.r2s.mobilestore.user.services.Impl;
+package com.r2s.mobilestore.user.services;
 
 import com.r2s.mobilestore.user.entities.Otp;
 import com.r2s.mobilestore.user.repositories.OTPRepository;
@@ -19,9 +19,9 @@ import java.util.Random;
 @Service
 public class OTPServiceImpl implements OTPService {
     /**
-     *  Set OTP_EXPIRATION_MINUTES = 1 minutes
+     *  Set OTP_EXPIRATION_MINUTES = 3 minutes
      */
-    private static final int OTP_EXPIRATION_MINUTES = 1;
+    private static final int OTP_EXPIRATION_MINUTES = 3;
 
     @Autowired
     private OTPRepository otpRepository;
@@ -93,9 +93,11 @@ public class OTPServiceImpl implements OTPService {
         Random random = new Random();
         int otpLength = 4;
         StringBuilder otp = new StringBuilder();
+
         for (int i = 0; i < otpLength; i++) {
             otp.append(random.nextInt(10));
         }
+
         return otp.toString();
     }
 
