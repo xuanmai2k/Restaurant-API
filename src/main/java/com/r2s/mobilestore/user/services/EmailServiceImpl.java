@@ -1,4 +1,4 @@
-package com.r2s.mobilestore.user.services.Impl;
+package com.r2s.mobilestore.user.services;
 
 import com.r2s.mobilestore.user.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;

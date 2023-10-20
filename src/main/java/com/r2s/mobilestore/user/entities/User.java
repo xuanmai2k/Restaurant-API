@@ -1,5 +1,6 @@
 package com.r2s.mobilestore.user.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
@@ -29,10 +30,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String fullName;
 
+    private String phoneNumber;
+
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     private String gender;
@@ -53,6 +57,10 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Address> addresses = new HashSet<>();
+
     private boolean enabled = true;
 
     @Override
@@ -65,13 +73,8 @@ public class User implements UserDetails {
         return authorities;
     }
 
-    @Override
     public String getUsername() {
-        return this.fullName;
-    }
-
-    public void setUsername(String fullName) {
-        this.fullName = fullName;
+        return this.email;
     }
 
     @Override
