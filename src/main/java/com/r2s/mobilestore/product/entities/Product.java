@@ -56,7 +56,7 @@ public class Product {
     /**
      * Represents the product’s price.
      */
-    @Column(name = "discount_price", nullable = true)
+    @Column(name = "discount_price")
     @DecimalMin(value = "0", inclusive = true, message = PRODUCT_PRICE_MIN_VALUE)
     @DecimalMax(value = "999999.99", inclusive = true, message = PRODUCT_PRICE_MAX_VALUE)
     private Double discountPrice;
