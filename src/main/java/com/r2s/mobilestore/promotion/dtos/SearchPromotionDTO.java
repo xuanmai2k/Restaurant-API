@@ -1,5 +1,6 @@
 package com.r2s.mobilestore.promotion.dtos;
 
+import com.r2s.mobilestore.dtos.PageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

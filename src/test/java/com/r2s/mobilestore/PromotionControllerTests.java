@@ -2,7 +2,7 @@ package com.r2s.mobilestore;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.r2s.mobilestore.promotion.dtos.PageDTO;
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.service.PromotionService;
@@ -133,7 +133,7 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         when(promotionService.listAll(pageDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint).contentType(MediaType.APPLICATION_JSON)
@@ -159,7 +159,7 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", expireDate,
                 true, 0, 100, pageDTO);
@@ -188,7 +188,7 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
                 true, 0, 100, pageDTO);
@@ -217,7 +217,7 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", expireDate,
                 null, 0, 100, pageDTO);
@@ -246,7 +246,7 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
                 null, 0, 100, pageDTO);
@@ -268,7 +268,7 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
                 null, 0, 100, pageDTO);

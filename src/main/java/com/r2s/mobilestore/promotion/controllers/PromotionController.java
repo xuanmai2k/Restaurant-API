@@ -1,8 +1,8 @@
 package com.r2s.mobilestore.promotion.controllers;
 
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
-import com.r2s.mobilestore.promotion.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.service.PromotionService;

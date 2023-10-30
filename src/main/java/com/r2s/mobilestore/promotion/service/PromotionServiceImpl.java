@@ -1,6 +1,6 @@
 package com.r2s.mobilestore.promotion.service;
 
-import com.r2s.mobilestore.promotion.dtos.PageDTO;
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.repositories.PromotionRepository;

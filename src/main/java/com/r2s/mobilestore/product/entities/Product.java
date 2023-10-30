@@ -54,7 +54,7 @@ public class Product {
     private Double price;
 
     /**
-     * Represents the product’s price.
+     * Represents the product’s discount price.
      */
     @Column(name = "discount_price")
     @DecimalMin(value = "0", inclusive = true, message = PRODUCT_PRICE_MIN_VALUE)
