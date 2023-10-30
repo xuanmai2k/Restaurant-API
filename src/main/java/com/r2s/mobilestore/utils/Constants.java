@@ -49,6 +49,16 @@ public class Constants {
     public static final String R2S = "r2s";
     //====== 2023/10/19 KhanhBD END ======//
 
+    //====== 2023/10/24 xuanmai START ======//
+    /**
+     * Validation of Promotion
+     */
+    public static final String PROMOTION_NON_NEGATIVE = "promotion.validation.non-negative-number";
+    public static final String PROMOTION_DATE_FUTURE_OR_PRESENT = "promotion.validation.future-or-current-date";
+    public static final String PROMOTION_MAX_MIN_CHARACTERS = "promotion.validation.max-1000-min-1-characters";
+    public static final String PROMOTION_MAX_VALUE = "promotion.validation.max-value-100";
+    //====== 2023/10/24 xuanmai END ======//
+
     //====== 2023/10/30 xuanmai START ======//
     /**
      * Validation of Product
@@ -62,4 +72,5 @@ public class Constants {
     public static final String PRODUCT_QUANTITY_MAX_VALUE = "product.price.validation.max-999999";
     public static final String PRODUCT_CONDITION_MAX_MIN_CHARACTERS = "product.condition.validation.min-1-max-20-characters";
     //====== 2023/10/30 xuanmai END ======//
+
 }

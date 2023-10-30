@@ -6,6 +6,7 @@ import com.r2s.mobilestore.promotion.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.service.PromotionService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +108,7 @@ public class PromotionController {
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping()
-    public ResponseEntity<?> createPromotion(@RequestBody Promotion promotion) {
+    public ResponseEntity<?> createPromotion(@RequestBody @Valid Promotion promotion) {
         try {
             //random discount code
             String discountCode = promotionService.getRandomDiscountCode(length);
@@ -135,7 +136,7 @@ public class PromotionController {
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("{id}")
-    public ResponseEntity<?> updatePromotion(@RequestBody Promotion promotion, @PathVariable Long id) {
+    public ResponseEntity<?> updatePromotion(@RequestBody @Valid Promotion promotion, @PathVariable Long id) {
         try {
             Optional<Promotion> updatePromotion = promotionService.getPromotionById(id);
 
