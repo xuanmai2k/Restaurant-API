@@ -34,6 +34,11 @@ public class CreateProductDTO {
     private Double price;
 
     /**
+     * Represents the response discount price.
+     */
+    private Double discountPrice;
+
+    /**
      * Represents the response quantity.
      */
     private Integer quantity;

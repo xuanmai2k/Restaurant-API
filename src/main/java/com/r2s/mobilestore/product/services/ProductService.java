@@ -1,7 +1,7 @@
 package com.r2s.mobilestore.product.services;
 
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
-import com.r2s.mobilestore.product.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Product;
 import org.springframework.data.domain.Page;

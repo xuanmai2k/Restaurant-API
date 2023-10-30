@@ -2,8 +2,8 @@ package com.r2s.mobilestore.product.services;
 
 import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.category.repositories.CategoryRepository;
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
-import com.r2s.mobilestore.product.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Manufacturer;
 import com.r2s.mobilestore.product.entities.Product;
@@ -93,6 +93,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductCode(getRandomProductCode(length));
         product.setName(createProductDTO.getName());
         product.setPrice(createProductDTO.getPrice());
+        product.setDiscountPrice(createProductDTO.getDiscountPrice());
         product.setQuantity(createProductDTO.getQuantity());
         product.setDescription(createProductDTO.getDescription());
         product.setMemoryTypes(createProductDTO.getMemoryTypes());
@@ -158,6 +159,7 @@ public class ProductServiceImpl implements ProductService {
             updateProduct.setProductCode(product.get().getProductCode());
             updateProduct.setName(createProductDTO.getName());
             updateProduct.setPrice(createProductDTO.getPrice());
+            updateProduct.setDiscountPrice(createProductDTO.getDiscountPrice());
             updateProduct.setQuantity(createProductDTO.getQuantity());
             updateProduct.setDescription(createProductDTO.getDescription());
             updateProduct.setMemoryTypes(createProductDTO.getMemoryTypes());

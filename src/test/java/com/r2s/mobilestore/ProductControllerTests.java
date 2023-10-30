@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2s.mobilestore.category.entities.Category;
 import com.r2s.mobilestore.category.services.CategoryService;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
-import com.r2s.mobilestore.product.dtos.PageDTO;
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Manufacturer;
 import com.r2s.mobilestore.product.entities.Product;
@@ -85,7 +85,7 @@ public class ProductControllerTests {
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0,500.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         mockMvc.perform(post(endpoint)
@@ -112,7 +112,7 @@ public class ProductControllerTests {
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 500.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         mockMvc.perform(post(endpoint)
@@ -140,7 +140,7 @@ public class ProductControllerTests {
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 500.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         when(productService.getProductById(id)).thenReturn(Optional.of(product));
@@ -179,7 +179,7 @@ public class ProductControllerTests {
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 500.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         when(productService.getProductById(id)).thenReturn(Optional.of(product));
@@ -206,7 +206,7 @@ public class ProductControllerTests {
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 500.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         when(productService.getProductById(id)).thenReturn(Optional.of(product));
@@ -233,12 +233,12 @@ public class ProductControllerTests {
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
         List<Product> productList = new ArrayList<>(Arrays.asList(
-                new Product(1L, "ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                new Product(1L, "ABCD1234", "iphone1", 1000.0, 500.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image),
-                new Product(2L, "ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                new Product(2L, "ABCD1234", "iphone2", 1000.0, 500.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image)));
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         Page<Product> productPage = new PageImpl<>(productList);
 
@@ -267,10 +267,10 @@ public class ProductControllerTests {
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 500.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
-        Product updateProduct = new Product(1L, "ABCD1234", "iphone11", 1000.0, 100, "great", "64GB",
+        Product updateProduct = new Product(1L, "ABCD1234", "iphone11", 1000.0, 500.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         when(productService.getProductById(eq(id))).thenReturn(Optional.of(product));
@@ -302,10 +302,10 @@ public class ProductControllerTests {
 
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
-        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 100, "great", "64GB",
+        Product product = new Product(1L, "ABCD1234", "iphone", 1000.0, 500.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
-        Product updateProduct = new Product(1L, "ABCD1234", "iphone11", 1000.0, 100, "great", "64GB",
+        Product updateProduct = new Product(1L, "ABCD1234", "iphone11", 1000.0, 500.0, 100, "great", "64GB",
                 "silver", "new", manufacturer1, category, image);
 
         when(productService.getProductById(eq(id))).thenReturn(Optional.of(product));
@@ -335,14 +335,14 @@ public class ProductControllerTests {
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
         List<Product> productList = new ArrayList<>(Arrays.asList(
-                new Product(1L, "ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                new Product(1L, "ABCD1234", "iphone1", 1000.0, 500.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image),
-                new Product(2L, "ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                new Product(2L, "ABCD1234", "iphone2", 1000.0, 500.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image)));
 
         Page<Product> productPage = new PageImpl<>(productList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         SearchProductDTO searchProductDTO = new SearchProductDTO("iphone", "apple", "phone", pageDTO);
 
@@ -372,9 +372,9 @@ public class ProductControllerTests {
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
         List<Product> productList = new ArrayList<>(Arrays.asList(
-                new Product(1L, "ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                new Product(1L, "ABCD1234", "iphone1", 1000.0, 500.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image),
-                new Product(2L, "ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                new Product(2L, "ABCD1234", "iphone2", 1000.0, 500.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image)));
 
         Integer pageNumber = 0;
@@ -382,7 +382,7 @@ public class ProductControllerTests {
 
         Page<Product> productPage = new PageImpl<>(productList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         SearchProductDTO searchProductDTO = new SearchProductDTO("iphone", "", "phone", pageDTO);
 
@@ -412,14 +412,14 @@ public class ProductControllerTests {
         when(manufacturerRepository.findByManufacturerNameContaining("apple")).thenReturn(manufacturer);
 
         List<Product> productList = new ArrayList<>(Arrays.asList(
-                new Product(1L, "ABCD1234", "iphone1", 1000.0, 100, "great", "64GB",
+                new Product(1L, "ABCD1234", "iphone1", 1000.0, 500.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image),
-                new Product(2L, "ABCD1234", "iphone2", 1000.0, 100, "great", "64GB",
+                new Product(2L, "ABCD1234", "iphone2", 1000.0, 500.0, 100, "great", "64GB",
                         "silver", "new", manufacturer1, category, image)));
 
         Page<Product> productPage = new PageImpl<>(productList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
         SearchProductDTO searchProductDTO = new SearchProductDTO("iphone", "apple", "", pageDTO);
 

@@ -52,6 +52,14 @@ public class Product {
     private Double price;
 
     /**
+     * Represents the product’s price.
+     */
+    @Column(name = "discount_price", nullable = true)
+    @DecimalMin(value = "0", inclusive = true, message = "Price must be greater than or equal to 0.")
+    @DecimalMax(value = "999999.99", inclusive = true, message = "Price cannot exceed 999999.99.")
+    private Double discountPrice;
+
+    /**
      * Represents the product’s quantity.
      */
     @Column(name = "quantity", nullable = false)

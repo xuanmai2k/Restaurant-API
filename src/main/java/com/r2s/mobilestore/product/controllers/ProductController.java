@@ -1,9 +1,9 @@
 package com.r2s.mobilestore.product.controllers;
 
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
-import com.r2s.mobilestore.product.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Product;
 import com.r2s.mobilestore.product.services.ProductService;
