@@ -30,31 +30,15 @@ public class PromotionServiceImpl implements PromotionService {
     private String allowedCharacters;
 
     /**
-     * This method is used to list all promotions
+     * This method is used to list promotions follow by status
      *
+     * @param status  This is a status of promotion
      * @param pageDTO This is a page
      * @return list all of promotions
      */
     @Override
-    public Page<Promotion> listAll(PageDTO pageDTO) {
-        return promotionRepository.findAll(PageRequest.of(pageDTO.getPageNumber(), pageDTO.getPageSize()));
-    }
-
-    /**
-     * Get all promotions containing discount code
-     *
-     * @param searchPromotionDTO This is keyword
-     * @return List of promotions
-     */
-    @Override
-    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO) {
-        return promotionRepository.searchPromotion(
-                searchPromotionDTO.getDiscountCode(),
-                searchPromotionDTO.getExpireDate(),
-                searchPromotionDTO.getDiscountAvailable(),
-                searchPromotionDTO.getMinDiscount(),
-                searchPromotionDTO.getMaxDiscount(),
-                PageRequest.of(searchPromotionDTO.getPageDTO().getPageNumber(), searchPromotionDTO.getPageDTO().getPageSize()));
+    public Page<Promotion> listFollowByStatus(String status, PageDTO pageDTO) {
+        return promotionRepository.searchPromotionByStatus(status, PageRequest.of(pageDTO.getPageNumber(), pageDTO.getPageSize()));
     }
 
     /**
@@ -91,7 +75,7 @@ public class PromotionServiceImpl implements PromotionService {
     /**
      * This method is used to random discount code
      *
-     * @param length This is promotion id
+     * @param length This is the length of promotion
      */
     @Override
     public String getRandomDiscountCode(Integer length) {
@@ -118,7 +102,27 @@ public class PromotionServiceImpl implements PromotionService {
      *
      * @param discountCode This is discount code
      */
+    @Override
     public Boolean checkForExistence(String discountCode) {
         return promotionRepository.existsByDiscountCode(discountCode);
+    }
+
+    /**
+     * Get all promotions containing discount code
+     *
+     * @param searchPromotionDTO This is keyword
+     * @return List of promotions
+     */
+    @Override
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO) {
+        return promotionRepository.searchPromotion(
+                searchPromotionDTO.getDiscountCode(),
+                searchPromotionDTO.getCustomerGroup(),
+                searchPromotionDTO.getStatus(),
+                searchPromotionDTO.getIsBeforeManufactureDate(),
+                searchPromotionDTO.getManufactureDate(),
+                searchPromotionDTO.getCompareUsed(),
+                searchPromotionDTO.getUsed(),
+                PageRequest.of(searchPromotionDTO.getPageDTO().getPageNumber(), searchPromotionDTO.getPageDTO().getPageSize()));
     }
 }

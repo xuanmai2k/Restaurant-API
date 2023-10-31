@@ -45,13 +45,14 @@ public class PromotionController {
      * REST API methods for Retrieval operations
      *
      * @param pageDTO This is a page
+     * @param status  This is a status of promotions
      * @return list all of promotions
      */
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping
-    public ResponseEntity<?> getAllPromotions(@RequestBody PageDTO pageDTO) {
+    public ResponseEntity<?> getAllPromotions(@RequestBody PageDTO pageDTO, @RequestParam String status) {
         try {
-            Page<Promotion> promotionList = promotionService.listAll(pageDTO);
+            Page<Promotion> promotionList = promotionService.listFollowByStatus(status, pageDTO);
 
             //Not empty
             if (!promotionList.isEmpty()) {
@@ -61,6 +62,72 @@ public class PromotionController {
             // No content
             body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
             return new ResponseEntity<>(body, HttpStatus.NO_CONTENT);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Build generate discount code of promotion REST API
+     *
+     * @return a discount code automatically
+     */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/generate-code")
+    public ResponseEntity<?> generateCode() {
+        try {
+            //random discount code
+            String discountCode = promotionService.getRandomDiscountCode(length);
+
+            // Successfully
+            return new ResponseEntity<>(discountCode, HttpStatus.OK);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Build create promotion REST API
+     *
+     * @param promotion This is a promotion
+     * @return a promotion is inserted into database
+     */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping()
+    public ResponseEntity<?> createPromotion(@RequestBody @Valid Promotion promotion) {
+        try {
+            // Check discount code existence
+            if (promotionService.checkForExistence(promotion.getDiscountCode()) == false) {
+
+                // Check manufacture date <= expire date
+                if (promotion.getManufactureDate().isBefore(promotion.getExpireDate())
+                        || promotion.getManufactureDate().isEqual(promotion.getExpireDate())) {
+
+                    // Save
+                    promotionService.save(promotion);
+
+                    // Successfully
+                    body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+                    return new ResponseEntity<>(body, HttpStatus.CREATED);
+                }
+
+                // Invalid value manufacture and expire date
+                body.setResponse(Response.Key.STATUS, Response.Value.INVALID_VALUE);
+                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            }
+
+            // Duplicate discount code
+            body.setResponse(Response.Key.STATUS, Response.Value.DUPLICATED);
+            return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
@@ -101,37 +168,10 @@ public class PromotionController {
     }
 
     /**
-     * Build create promotion REST API
-     *
-     * @param promotion This is a promotion
-     * @return a promotion is inserted into database
-     */
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PostMapping()
-    public ResponseEntity<?> createPromotion(@RequestBody @Valid Promotion promotion) {
-        try {
-            //random discount code
-            String discountCode = promotionService.getRandomDiscountCode(length);
-            promotion.setDiscountCode(discountCode);
-            promotionService.save(promotion);
-
-            // Successfully
-            body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
-            return new ResponseEntity<>(body, HttpStatus.CREATED);
-        } catch (Exception ex) {
-            logger.info(ex.getMessage());
-
-            // Failed
-            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
-            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
      * Build update promotion REST API
      *
-     * @param id        This is promotion id
      * @param promotion This promotion details
+     * @param id        This is promotion id
      * @return promotion is updated
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -142,16 +182,29 @@ public class PromotionController {
 
             //Found
             if (updatePromotion.isPresent()) {
-                Promotion _promotion = updatePromotion.get();
-                _promotion.setTotalPurchase(promotion.getTotalPurchase());
-                _promotion.setDiscount(promotion.getDiscount());
-                _promotion.setMaxPromotionGet(promotion.getMaxPromotionGet());
-                _promotion.setExpireDate(promotion.getExpireDate());
-                _promotion.setCampaignDescription(promotion.getCampaignDescription());
-                _promotion.setDiscountAvailable(promotion.getDiscountAvailable());
 
-                //Successfully
-                return new ResponseEntity<>(promotionService.save(_promotion), HttpStatus.OK);
+                // Check manufacture date <= expire date
+                if (promotion.getManufactureDate().isBefore(promotion.getExpireDate())
+                        || promotion.getManufactureDate().isEqual(promotion.getExpireDate())) {
+
+                    Promotion _promotion = updatePromotion.get();
+                    _promotion.setCampaignDescription(promotion.getCampaignDescription());
+                    _promotion.setQuantity(promotion.getQuantity());
+                    _promotion.setManufactureDate(promotion.getManufactureDate());
+                    _promotion.setExpireDate(promotion.getExpireDate());
+                    _promotion.setPercentageDiscount(promotion.getPercentageDiscount());
+                    _promotion.setPriceDiscount(promotion.getPriceDiscount());
+                    _promotion.setMaximumPriceDiscount(promotion.getMaximumPriceDiscount());
+                    _promotion.setMinimumOrderValue(promotion.getMinimumOrderValue());
+                    _promotion.setCustomerGroup(promotion.getCustomerGroup());
+
+                    //Successfully
+                    return new ResponseEntity<>(promotionService.save(_promotion), HttpStatus.OK);
+                }
+
+                // Invalid value manufacture and expire date
+                body.setResponse(Response.Key.STATUS, Response.Value.INVALID_VALUE);
+                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
             }
 
             // Not found

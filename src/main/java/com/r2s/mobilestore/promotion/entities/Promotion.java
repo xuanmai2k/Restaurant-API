@@ -33,46 +33,76 @@ public class Promotion {
     private String discountCode;
 
     /**
-     * Represents the minimum order value to add a voucher
+     * Represents description's discount
      */
-    @Column(name = "total_purchase", nullable = false)
-    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
-    private Integer totalPurchase;
+    @Column(name = "campaign_description")
+//    @Size(min = 1, max = 1000, message = PROMOTION_MAX_MIN_CHARACTERS)
+    private String campaignDescription;
 
     /**
-     * Represents the percentage discount
+     * represents the quantity of promotion
      */
-    @Column(name = "discount", nullable = false)
-    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
-    @Max(value = 100, message = PROMOTION_MAX_VALUE)
-    private Double discount;
+    @Column(name = "quantity")
+//    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
+    private Integer quantity;
+
+
+    @Column(name = "used")
+    private Integer used = 0;
 
     /**
-     * represents the maximum amount of reduction
+     * represents the manufacture date
      */
-    @Column(name = "maximum_promotion_get", nullable = false)
-    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
-    private Integer maxPromotionGet;
+    @Column(name = "manufacture_date")
+    private LocalDate manufactureDate;
 
     /**
      * represents the expiration date
      */
-    @Column(name = "expire_date", nullable = false)
-    @FutureOrPresent(message = PROMOTION_DATE_FUTURE_OR_PRESENT)
+    @Column(name = "expire_date")
+//    @FutureOrPresent(message = PROMOTION_DATE_FUTURE_OR_PRESENT)
     private LocalDate expireDate;
 
     /**
-     * Represents description's discount
+     * Represents the percentage discount
      */
-    @Column(name = "campaign_description", nullable = false)
-    @Size(min = 1, max = 1000, message = PROMOTION_MAX_MIN_CHARACTERS)
-    private String campaignDescription;
+    @Column(name = "percentage_discount")
+//    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
+//    @Max(value = 100, message = PROMOTION_MAX_VALUE)
+    private Double percentageDiscount;
 
     /**
-     * Represents discount available
+     * Represents the percentage discount
      */
-    @Column(name = "discount_available", nullable = false)
-    private Boolean discountAvailable = true;
+    @Column(name = "price_discount")
+//    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
+//    @Max(value = 100, message = PROMOTION_MAX_VALUE)
+    private Double priceDiscount;
 
+    /**
+     * Represents the maximum price discount
+     */
+    @Column(name = "maximum_price_discount")
+//    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
+    private Integer maximumPriceDiscount;
+
+    /**
+     * Represents the minimum order value to add a voucher
+     */
+    @Column(name = "minimum_order_value")
+//    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
+    private Integer minimumOrderValue;
+
+    /**
+     * Represents the status promotion
+     */
+    @Column(name = "status")
+    private String status;
+
+    /**
+     * Represents the customer group
+     */
+    @Column(name = "customer_group")
+    private String customerGroup;
 
 }
