@@ -381,8 +381,5 @@ public class PromotionController {
         }
     }
 
-    @Scheduled(cron = "0 59 23 * * ?")  // Chạy vào 23h59h mỗi ngày
-    public void updateStartPromotionStatusDaily() {
-        promotionService.updateStartPromotionStatus();
-    }
+
 }

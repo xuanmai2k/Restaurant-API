@@ -54,4 +54,5 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     boolean existsByDiscountCode(String discountCode);
 
     List<Promotion> findByManufactureDate(LocalDate currentDate);
+
 }

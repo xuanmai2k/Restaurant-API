@@ -70,8 +70,9 @@ public interface PromotionService {
 
 
     /**
-     * This method is used to update status of promotion
+     * This method is used to update activate status of promotion
      *
      */
     public void updateStartPromotionStatus();
+
 }

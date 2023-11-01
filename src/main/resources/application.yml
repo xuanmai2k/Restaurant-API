@@ -38,6 +38,7 @@ LENGTH_OF_PRODUCT_CODE: 6
 ACTIVATE: activated
 NOT_ACTIVATE: not-activated
 PENDING: pending
+EXPIRE: expire
 ##====== ADD 2023/11/01 xuanmai END ======#
 
 # JWT RSA key pair

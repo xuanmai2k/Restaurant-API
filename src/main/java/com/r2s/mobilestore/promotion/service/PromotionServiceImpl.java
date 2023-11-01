@@ -36,8 +36,8 @@ public class PromotionServiceImpl implements PromotionService {
     @Value("${ACTIVATE}")
     private String ACTIVATE;
 
-    @Value("${NOT_ACTIVATE}")
-    private String NOT_ACTIVATE;
+    @Value("${EXPIRE}")
+    private String EXPIRE;
 
     /**
      * This method is used to list promotions follow by status
