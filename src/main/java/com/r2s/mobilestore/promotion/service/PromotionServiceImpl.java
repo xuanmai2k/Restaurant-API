@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,12 +25,19 @@ import java.util.Optional;
  */
 @Service
 @Transactional
+@Component
 public class PromotionServiceImpl implements PromotionService {
     @Autowired
     private PromotionRepository promotionRepository;
 
     @Value("${ALLOWED_CHARACTERS}")
     private String allowedCharacters;
+
+    @Value("${ACTIVATE}")
+    private String ACTIVATE;
+
+    @Value("${NOT_ACTIVATE}")
+    private String NOT_ACTIVATE;
 
     /**
      * This method is used to list promotions follow by status
@@ -125,4 +135,18 @@ public class PromotionServiceImpl implements PromotionService {
                 searchPromotionDTO.getUsed(),
                 PageRequest.of(searchPromotionDTO.getPageDTO().getPageNumber(), searchPromotionDTO.getPageDTO().getPageSize()));
     }
+
+    @Override
+    public void updateStartPromotionStatus() {
+        LocalDate currentDate = LocalDate.now();
+
+        List<Promotion> promotions = promotionRepository.findByManufactureDate(currentDate);
+
+        for (Promotion promotion : promotions) {
+            promotion.setStatus(ACTIVATE);
+            save(promotion);
+        }
+    }
+
+
 }

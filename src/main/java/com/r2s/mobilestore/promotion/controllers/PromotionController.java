@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 /**
@@ -34,7 +36,16 @@ public class PromotionController {
     private final ResponseDTO body = ResponseDTO.getInstance();
 
     @Value("${LENGTH_OF_DISCOUNT_CODE_PROMOTION}")
-    private Integer length;
+    private Integer LENGTH;
+
+    @Value("${ACTIVATE}")
+    private String ACTIVATE;
+
+    @Value("${NOT_ACTIVATE}")
+    private String NOT_ACTIVATE;
+
+    @Value("${PENDING}")
+    private String PENDING;
 
     /**
      * Logging in Spring Boot
@@ -81,7 +92,7 @@ public class PromotionController {
     public ResponseEntity<?> generateCode() {
         try {
             //random discount code
-            String discountCode = promotionService.getRandomDiscountCode(length);
+            String discountCode = promotionService.getRandomDiscountCode(LENGTH);
 
             // Successfully
             return new ResponseEntity<>(discountCode, HttpStatus.OK);
@@ -98,7 +109,7 @@ public class PromotionController {
      * Build create promotion REST API
      *
      * @param promotion This is a promotion
-     * @return a promotion is inserted into database
+     * @return http status
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping()
@@ -110,6 +121,14 @@ public class PromotionController {
                 // Check manufacture date <= expire date
                 if (promotion.getManufactureDate().isBefore(promotion.getExpireDate())
                         || promotion.getManufactureDate().isEqual(promotion.getExpireDate())) {
+
+                    //Set status
+                    LocalDate currentDate = LocalDate.now();
+                    if (promotion.getManufactureDate().isEqual(currentDate)) {
+                        promotion.setStatus(ACTIVATE);
+                    } else {
+                        promotion.setStatus(NOT_ACTIVATE);
+                    }
 
                     // Save
                     promotionService.save(promotion);
@@ -128,6 +147,89 @@ public class PromotionController {
             body.setResponse(Response.Key.STATUS, Response.Value.DUPLICATED);
             return new ResponseEntity<>(body, HttpStatus.CONFLICT);
 
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Build change pending status promotion
+     *
+     * @param id This is a promotion id
+     * @return updated status of promotion
+     */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/pending/{id}")
+    public ResponseEntity<?> pendingStatusPromotion(@PathVariable Long id) {
+        try {
+            Optional<Promotion> updatePromotion = promotionService.getPromotionById(id);
+
+            //Found
+            if (updatePromotion.isPresent()) {
+
+                //Check status activate
+                if (updatePromotion.get().getStatus().equals(ACTIVATE)) {
+                    Promotion _promotion = updatePromotion.get();
+                    _promotion.setStatus(PENDING);
+
+                    //Successfully
+                    body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+                    return new ResponseEntity<>(promotionService.save(_promotion), HttpStatus.OK);
+                }
+
+                //Status not activate
+                body.setResponse(Response.Key.STATUS, Response.Value.INVALID_VALUE);
+                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            }
+
+            // Not found
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            // Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Build change activate status promotion
+     *
+     * @param id This is a promotion id
+     * @return updated status of promotion
+     */
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/activated/{id}")
+    public ResponseEntity<?> activatedStatusPromotion(@PathVariable Long id) {
+        try {
+            Optional<Promotion> updatePromotion = promotionService.getPromotionById(id);
+
+            //Found
+            if (updatePromotion.isPresent()) {
+
+                //Check status pending
+                if (updatePromotion.get().getStatus().equals(PENDING)) {
+                    Promotion _promotion = updatePromotion.get();
+                    _promotion.setStatus(ACTIVATE);
+
+                    //Successfully
+                    return new ResponseEntity<>(promotionService.save(_promotion), HttpStatus.OK);
+                }
+
+                //Status not activate
+                body.setResponse(Response.Key.STATUS, Response.Value.INVALID_VALUE);
+                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+            }
+
+            // Not found
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 
@@ -256,7 +358,7 @@ public class PromotionController {
      */
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestBody SearchPromotionDTO searchPromotionDTO) {
+    public ResponseEntity<?> searchPromotion(@RequestBody SearchPromotionDTO searchPromotionDTO) {
         try {
             Page<Promotion> promotionList = promotionService.search(searchPromotionDTO);
 
@@ -277,5 +379,10 @@ public class PromotionController {
             body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
             return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Scheduled(cron = "0 59 23 * * ?")  // Chạy vào 23h59h mỗi ngày
+    public void updateStartPromotionStatusDaily() {
+        promotionService.updateStartPromotionStatus();
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Represents a promotion repository
@@ -51,4 +52,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
                                             Pageable pageable);
 
     boolean existsByDiscountCode(String discountCode);
+
+    List<Promotion> findByManufactureDate(LocalDate currentDate);
 }
