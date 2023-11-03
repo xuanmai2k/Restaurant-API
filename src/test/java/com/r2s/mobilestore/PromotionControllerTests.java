@@ -72,9 +72,13 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,null,
-                9000,"pending","vip");
+                manufactureDate,expireDate,10.0,9000,
+                9000,"pending",customerGroup);
 
         mockMvc.perform(post(endpoint).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(promotion)))
@@ -89,9 +93,13 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,null,
-                9000,"pending","vip");
+                manufactureDate,expireDate,10.0,9000,
+                9000,"pending",customerGroup);
 
         mockMvc.perform(post(endpoint).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(promotion)))
@@ -107,9 +115,13 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         Promotion promotion = new Promotion(1,"ABC123","great",0,
                 manufactureDate,expireDate,10.0,null,
-                9000,"pending","vip");
+                9000,"pending",customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
 
@@ -150,13 +162,17 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1,"ABC123","great",0,
                         manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip"),
-                new Promotion(2,"XYZ456","great",0,
+                        9000,"pending",customerGroup),
+                new Promotion(2,"ABC456","great",0,
                         manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip")
+                        9000,"pending",customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
@@ -181,13 +197,17 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1,"ABC123","great",0,
                         manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip"),
+                        9000,"pending",customerGroup),
                 new Promotion(2,"ABC456","great",0,
                         manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip")
+                        9000,"pending",customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
@@ -213,13 +233,17 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1,"ABC123","great",0,
                         manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip"),
-                new Promotion(2,"XYZ456","great",0,
+                        9000,"pending",customerGroup),
+                new Promotion(2,"ABC456","great",0,
                         manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip")
+                        9000,"pending",customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
@@ -245,13 +269,17 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1,"ABC123","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip"),
-                new Promotion(2,"XYZ456","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip")
+                        manufactureDate,expireDate,10.0,9000,
+                        9000,"pending",customerGroup),
+                new Promotion(2,"ABC456","great",0,
+                        manufactureDate,expireDate,10.0,9000,
+                        9000,"pending",customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
@@ -277,13 +305,17 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1,"ABC123","great",0,
                         manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip"),
-                new Promotion(2,"XYZ456","great",0,
+                        9000,"pending",customerGroup),
+                new Promotion(2,"ABC456","great",0,
                         manufactureDate,expireDate,10.0,null,
-                        9000,"pending","vip")
+                        9000,"pending",customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
@@ -333,12 +365,16 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,null,
-                9000,"pending","vip");
+                manufactureDate,expireDate,10.0,9000,
+                9000,"pending",customerGroup);
         Promotion updatePromotion = new Promotion(1,"XYZ456","great",0,
-                manufactureDate,expireDate,20.0,null,
-                9000,"activated","pro");
+                manufactureDate,expireDate,20.0,9000,
+                9000,"activated",customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
         when(promotionService.save(any(Promotion.class))).thenReturn(updatePromotion);
@@ -363,12 +399,16 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,null,
-                9000,"pending","vip");
+                manufactureDate,expireDate,10.0,9000,
+                9000,"pending",customerGroup);
         Promotion updatePromotion = new Promotion(1,"XYZ456","great",0,
-                manufactureDate,expireDate,20.0,null,
-                9000,"activated","pro");
+                manufactureDate,expireDate,20.0,9000,
+                9000,"activated",customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
         when(promotionService.save(any(Promotion.class))).thenReturn(updatePromotion);
@@ -388,9 +428,13 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         Promotion promotion = new Promotion(1,"ABC123","great",0,
                 manufactureDate,expireDate,10.0,null,
-                9000,"pending","vip");
+                9000,"pending",customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
 
@@ -408,9 +452,13 @@ public class PromotionControllerTests {
         LocalDate manufactureDate = LocalDate.parse("2026-12-12");
         LocalDate expireDate = LocalDate.parse("2026-12-20");
 
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         Promotion promotion = new Promotion(1,"ABC123","great",0,
                 manufactureDate,expireDate,10.0,null,
-                9000,"pending","vip");
+                9000,"pending",customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
 
@@ -437,23 +485,27 @@ public class PromotionControllerTests {
     public void testUpdateExpireStatus() {
 
         LocalDate expireDate = LocalDate.now().plusDays(1);
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1,"ABC123","great",0,
-                        LocalDate.now(),expireDate,10.0,null,
-                        9000,"activate","vip"),
+                        LocalDate.now(),expireDate,10.0,9000,
+                        9000,"pending",customerGroup),
                 new Promotion(2,"ABC456","great",0,
-                        LocalDate.now(),expireDate,10.0,null,
-                        9000,"activate","vip")
+                        LocalDate.now(),expireDate,10.0,9000,
+                        9000,"pending",customerGroup)
         );
 
         Answer<Void> updateExpirePromotionStatusAnswer = invocation -> {
             List<Promotion> promotionListUpdate = Arrays.asList(
                     new Promotion(1,"ABC123","great",0,
-                            LocalDate.now(),expireDate,10.0,null,
-                            9000,"expire","vip"),
+                            LocalDate.now(),expireDate,10.0,9000,
+                            9000,"expire",customerGroup),
                     new Promotion(2,"ABC456","great",0,
-                            LocalDate.now(),expireDate,10.0,null,
-                            9000,"expire","vip")
+                            LocalDate.now(),expireDate,10.0,9000,
+                            9000,"expire",customerGroup)
             );
             when(promotionRepository.findByExpireDate(LocalDate.now())).thenReturn(promotionListUpdate);
             return null;
@@ -465,27 +517,33 @@ public class PromotionControllerTests {
         verify(promotionService).updateExpirePromotionStatus();
     }
 
+
     @Test
     public void testUpdateActivateStatus() {
 
         LocalDate manufactureDay = LocalDate.now();
+
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1,"ABC123","great",0,
-                        manufactureDay,LocalDate.now().plusDays(1),10.0,null,
-                        9000,"not-activate","vip"),
+                        manufactureDay,LocalDate.now().plusDays(1),10.0,9000,
+                        9000,"pending",customerGroup),
                 new Promotion(2,"ABC456","great",0,
-                        manufactureDay,LocalDate.now().plusDays(1),10.0,null,
-                        9000,"not-activate","vip")
+                        manufactureDay,LocalDate.now().plusDays(1),10.0,9000,
+                        9000,"pending",customerGroup)
         );
 
         Answer<Void> updateActivatePromotionStatusAnswer = invocation -> {
             List<Promotion> promotionListUpdate = Arrays.asList(
                     new Promotion(1,"ABC123","great",0,
-                            manufactureDay,LocalDate.now().plusDays(1),10.0,null,
-                            9000,"activate","vip"),
+                            manufactureDay,LocalDate.now().plusDays(1),10.0,9000,
+                            9000,"activate",customerGroup),
                     new Promotion(2,"ABC456","great",0,
-                            manufactureDay,LocalDate.now().plusDays(1),10.0,null,
-                            9000,"activate","vip")
+                            manufactureDay,LocalDate.now().plusDays(1),10.0,9000,
+                            9000,"activate",customerGroup)
             );
             when(promotionRepository.findByManufactureDate(LocalDate.now())).thenReturn(promotionListUpdate);
             return null;

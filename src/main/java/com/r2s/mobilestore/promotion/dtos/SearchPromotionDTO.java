@@ -50,7 +50,7 @@ public class SearchPromotionDTO {
     /**
      * Represents the client used
      */
-    private Integer used = 0;
+    private Integer used;
 
     /**
      * Represents page

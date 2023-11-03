@@ -53,11 +53,14 @@ public class Constants {
     /**
      * Validation of Promotion
      */
-    public static final String PROMOTION_NON_NEGATIVE = "promotion.validation.non-negative-number";
+    public static final String PROMOTION_CODE_NULL = "Haven't entered promotion code yet. You can enter a promotion code or use automatic code generation.";
+    public static final String MAXIMUM_PRICE_DISCOUNT = "The highest price for the percentage discount promotion is invalid";
+    public static final String PERCENTAGE_PROMOTION = "The reduced price is invalid";
+    public static final String MINIMUM_ORDER_VALUE_PROMOTION = "Minimum order value is invalid";
+    public static final String PROMOTION_CODE_MAX_MIN_CHARACTER = "promotion.validation.max-26-min-1-characters";
     public static final String PROMOTION_DATE_FUTURE_OR_PRESENT = "promotion.validation.future-or-current-date";
-    public static final String PROMOTION_MAX_MIN_CHARACTERS = "promotion.validation.max-1000-min-1-characters";
-    public static final String PROMOTION_MAX_VALUE = "promotion.validation.max-value-100";
-    //====== 2023/10/24 xuanmai END ======//
+    public static final String PROMOTION_MAX_MIN_CHARACTERS = "promotion.validation.max-2000-min-1-characters";
+    //====== 2023/11/03 xuanmai END ======//
 
     //====== 2023/10/30 xuanmai START ======//
     /**
