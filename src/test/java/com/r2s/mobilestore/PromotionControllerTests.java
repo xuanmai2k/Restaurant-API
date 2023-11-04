@@ -5,8 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
+import com.r2s.mobilestore.promotion.repositories.PromotionRepository;
 import com.r2s.mobilestore.promotion.service.PromotionService;
+import com.r2s.mobilestore.utils.Scheduler;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,9 +32,9 @@ import java.util.*;
 
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,9 +51,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ExtendWith(MockitoExtension.class)
 public class PromotionControllerTests {
     @MockBean
     private PromotionService promotionService;
+
+    @InjectMocks
+    private Scheduler scheduler;
+
+    @MockBean
+    private PromotionRepository promotionRepository;
 
     @Autowired
     protected MockMvc mockMvc;
@@ -425,5 +440,39 @@ public class PromotionControllerTests {
                 .andDo(print());
     }
 
+
+    @Test
+    void shouldUpdateActivateStatus(){
+
+        LocalDate manufactureDate = LocalDate.parse("2023-11-02");
+        LocalDate expireDate = LocalDate.parse("2023-11-04");
+
+        List<Promotion> promotionList = Arrays.asList(
+                new Promotion(1,"ABC123","great",0,
+                        manufactureDate,expireDate,10.0,null,
+                        9000,"activate","vip"),
+                new Promotion(2,"XYZ456","great",0,
+                        manufactureDate,expireDate,10.0,null,
+                        9000,"activate","vip")
+        );
+
+        // tạo thêm save
+
+        List<Promotion> promotionListUpdate = Arrays.asList(
+                new Promotion(1,"ABC123","great",0,
+                        manufactureDate,expireDate,10.0,null,
+                        9000,"expire","vip"),
+                new Promotion(2,"XYZ456","great",0,
+                        manufactureDate,expireDate,10.0,null,
+                        9000,"expire","vip")
+        );
+
+        when(promotionRepository.findByExpireDate(expireDate)).thenReturn(promotionListUpdate);
+
+        verify(promotionService, times(1)).updateExpirePromotionStatus();
+
+        assertEquals("expire", promotionListUpdate.get(0).getStatus());
+
+    }
 
 }
