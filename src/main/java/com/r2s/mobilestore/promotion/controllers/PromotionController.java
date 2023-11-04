@@ -291,11 +291,9 @@ public class PromotionController {
 
                     Promotion _promotion = updatePromotion.get();
                     _promotion.setCampaignDescription(promotion.getCampaignDescription());
-                    _promotion.setQuantity(promotion.getQuantity());
                     _promotion.setManufactureDate(promotion.getManufactureDate());
                     _promotion.setExpireDate(promotion.getExpireDate());
                     _promotion.setPercentageDiscount(promotion.getPercentageDiscount());
-                    _promotion.setPriceDiscount(promotion.getPriceDiscount());
                     _promotion.setMaximumPriceDiscount(promotion.getMaximumPriceDiscount());
                     _promotion.setMinimumOrderValue(promotion.getMinimumOrderValue());
                     _promotion.setCustomerGroup(promotion.getCustomerGroup());

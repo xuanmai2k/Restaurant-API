@@ -39,13 +39,6 @@ public class Promotion {
 //    @Size(min = 1, max = 1000, message = PROMOTION_MAX_MIN_CHARACTERS)
     private String campaignDescription;
 
-    /**
-     * represents the quantity of promotion
-     */
-    @Column(name = "quantity")
-//    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
-    private Integer quantity;
-
 
     @Column(name = "used")
     private Integer used = 0;
@@ -70,14 +63,6 @@ public class Promotion {
 //    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
 //    @Max(value = 100, message = PROMOTION_MAX_VALUE)
     private Double percentageDiscount;
-
-    /**
-     * Represents the percentage discount
-     */
-    @Column(name = "price_discount")
-//    @Min(value = 0, message = PROMOTION_NON_NEGATIVE)
-//    @Max(value = 100, message = PROMOTION_MAX_VALUE)
-    private Double priceDiscount;
 
     /**
      * Represents the maximum price discount
