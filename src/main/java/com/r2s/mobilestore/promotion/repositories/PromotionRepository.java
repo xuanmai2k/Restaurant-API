@@ -55,4 +55,5 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
 
     List<Promotion> findByManufactureDate(LocalDate currentDate);
 
+    List<Promotion> findByExpireDate(LocalDate currentDate);
 }

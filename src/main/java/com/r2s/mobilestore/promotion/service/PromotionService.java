@@ -68,11 +68,14 @@ public interface PromotionService {
      */
     public Boolean checkForExistence(String discountCode);
 
-
     /**
      * This method is used to update activate status of promotion
-     *
      */
-    public void updateStartPromotionStatus();
+    public void updateActivatePromotionStatus();
+
+    /**
+     * This method is used to update expire status of promotion
+     */
+    public void updateExpirePromotionStatus();
 
 }

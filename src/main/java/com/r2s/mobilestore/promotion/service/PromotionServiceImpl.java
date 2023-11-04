@@ -136,8 +136,11 @@ public class PromotionServiceImpl implements PromotionService {
                 PageRequest.of(searchPromotionDTO.getPageDTO().getPageNumber(), searchPromotionDTO.getPageDTO().getPageSize()));
     }
 
+    /**
+     * Get all promotions which manufactureDay is today to change the status
+     */
     @Override
-    public void updateStartPromotionStatus() {
+    public void updateActivatePromotionStatus() {
         LocalDate currentDate = LocalDate.now();
 
         List<Promotion> promotions = promotionRepository.findByManufactureDate(currentDate);
@@ -148,5 +151,19 @@ public class PromotionServiceImpl implements PromotionService {
         }
     }
 
+    /**
+     * Get all promotions which expireDay is today to change the status
+     */
+    @Override
+    public void updateExpirePromotionStatus() {
+        LocalDate currentDate = LocalDate.now();
+
+        List<Promotion> promotions = promotionRepository.findByExpireDate(currentDate);
+
+        for (Promotion promotion : promotions) {
+            promotion.setStatus(EXPIRE);
+            save(promotion);
+        }
+    }
 
 }
