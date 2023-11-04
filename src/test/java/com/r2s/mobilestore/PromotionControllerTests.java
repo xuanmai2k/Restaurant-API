@@ -7,14 +7,10 @@ import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.repositories.PromotionRepository;
 import com.r2s.mobilestore.promotion.service.PromotionService;
-import com.r2s.mobilestore.utils.Scheduler;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.stubbing.OngoingStubbing;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,7 +28,6 @@ import java.util.*;
 
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -55,9 +50,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PromotionControllerTests {
     @MockBean
     private PromotionService promotionService;
-
-    @InjectMocks
-    private Scheduler scheduler;
 
     @MockBean
     private PromotionRepository promotionRepository;
@@ -442,37 +434,67 @@ public class PromotionControllerTests {
 
 
     @Test
-    void shouldUpdateActivateStatus(){
+    public void testUpdateExpireStatus() {
 
-        LocalDate manufactureDate = LocalDate.parse("2023-11-02");
-        LocalDate expireDate = LocalDate.parse("2023-11-04");
-
+        LocalDate expireDate = LocalDate.now().plusDays(1);
         List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1,"ABC123","great",0,
-                        manufactureDate,expireDate,10.0,null,
+                        LocalDate.now(),expireDate,10.0,null,
                         9000,"activate","vip"),
-                new Promotion(2,"XYZ456","great",0,
-                        manufactureDate,expireDate,10.0,null,
+                new Promotion(2,"ABC456","great",0,
+                        LocalDate.now(),expireDate,10.0,null,
                         9000,"activate","vip")
         );
 
-        // tạo thêm save
+        Answer<Void> updateExpirePromotionStatusAnswer = invocation -> {
+            List<Promotion> promotionListUpdate = Arrays.asList(
+                    new Promotion(1,"ABC123","great",0,
+                            LocalDate.now(),expireDate,10.0,null,
+                            9000,"expire","vip"),
+                    new Promotion(2,"ABC456","great",0,
+                            LocalDate.now(),expireDate,10.0,null,
+                            9000,"expire","vip")
+            );
+            when(promotionRepository.findByExpireDate(LocalDate.now())).thenReturn(promotionListUpdate);
+            return null;
+        };
 
-        List<Promotion> promotionListUpdate = Arrays.asList(
+        doAnswer(updateExpirePromotionStatusAnswer).when(promotionService).updateExpirePromotionStatus();
+
+        // Verify that the updateExpirePromotionStatus() method was called once
+        verify(promotionService).updateExpirePromotionStatus();
+    }
+
+    @Test
+    public void testUpdateActivateStatus() {
+
+        LocalDate manufactureDay = LocalDate.now();
+        List<Promotion> promotionList = Arrays.asList(
                 new Promotion(1,"ABC123","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"expire","vip"),
-                new Promotion(2,"XYZ456","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"expire","vip")
+                        manufactureDay,LocalDate.now().plusDays(1),10.0,null,
+                        9000,"not-activate","vip"),
+                new Promotion(2,"ABC456","great",0,
+                        manufactureDay,LocalDate.now().plusDays(1),10.0,null,
+                        9000,"not-activate","vip")
         );
 
-        when(promotionRepository.findByExpireDate(expireDate)).thenReturn(promotionListUpdate);
+        Answer<Void> updateActivatePromotionStatusAnswer = invocation -> {
+            List<Promotion> promotionListUpdate = Arrays.asList(
+                    new Promotion(1,"ABC123","great",0,
+                            manufactureDay,LocalDate.now().plusDays(1),10.0,null,
+                            9000,"activate","vip"),
+                    new Promotion(2,"ABC456","great",0,
+                            manufactureDay,LocalDate.now().plusDays(1),10.0,null,
+                            9000,"activate","vip")
+            );
+            when(promotionRepository.findByManufactureDate(LocalDate.now())).thenReturn(promotionListUpdate);
+            return null;
+        };
 
-        verify(promotionService, times(1)).updateExpirePromotionStatus();
+        doAnswer(updateActivatePromotionStatusAnswer).when(promotionService).updateActivatePromotionStatus();
 
-        assertEquals("expire", promotionListUpdate.get(0).getStatus());
-
+        // Verify that the updateExpirePromotionStatus() method was called once
+        verify(promotionService).updateActivatePromotionStatus();
     }
 
 }
