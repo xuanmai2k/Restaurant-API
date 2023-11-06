@@ -170,7 +170,7 @@ public class PromotionController {
             //Found
             if (updatePromotion.isPresent()) {
 
-                //Check status activate
+                //Check status activated
                 if (updatePromotion.get().getStatus().equals(ACTIVATE)) {
                     Promotion _promotion = updatePromotion.get();
                     _promotion.setStatus(PENDING);
@@ -190,7 +190,7 @@ public class PromotionController {
                     return new ResponseEntity<>(promotionService.save(_promotion), HttpStatus.OK);
                 }
 
-                //Status not activate
+                //Check status not activate
                 body.setResponse(Response.Key.STATUS, Response.Value.INVALID_VALUE);
                 return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
             }
