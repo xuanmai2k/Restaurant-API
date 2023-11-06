@@ -12,14 +12,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -158,14 +156,14 @@ public class PromotionController {
     }
 
     /**
-     * Build change pending status promotion
+     * Build change status promotion
      *
      * @param id This is a promotion id
      * @return updated status of promotion
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PostMapping("/pending/{id}")
-    public ResponseEntity<?> pendingStatusPromotion(@PathVariable Long id) {
+    @PostMapping("/change-status/{id}")
+    public ResponseEntity<?> changeStatusPromotion(@PathVariable Long id) {
         try {
             Optional<Promotion> updatePromotion = promotionService.getPromotionById(id);
 
@@ -182,44 +180,13 @@ public class PromotionController {
                     return new ResponseEntity<>(promotionService.save(_promotion), HttpStatus.OK);
                 }
 
-                //Status not activate
-                body.setResponse(Response.Key.STATUS, Response.Value.INVALID_VALUE);
-                return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
-            }
-
-            // Not found
-            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
-            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
-        } catch (Exception ex) {
-            logger.info(ex.getMessage());
-
-            // Failed
-            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
-            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Build change activate status promotion
-     *
-     * @param id This is a promotion id
-     * @return updated status of promotion
-     */
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @PostMapping("/activated/{id}")
-    public ResponseEntity<?> activatedStatusPromotion(@PathVariable Long id) {
-        try {
-            Optional<Promotion> updatePromotion = promotionService.getPromotionById(id);
-
-            //Found
-            if (updatePromotion.isPresent()) {
-
                 //Check status pending
                 if (updatePromotion.get().getStatus().equals(PENDING)) {
                     Promotion _promotion = updatePromotion.get();
                     _promotion.setStatus(ACTIVATE);
 
                     //Successfully
+                    body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
                     return new ResponseEntity<>(promotionService.save(_promotion), HttpStatus.OK);
                 }
 

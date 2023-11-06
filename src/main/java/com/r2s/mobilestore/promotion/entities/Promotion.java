@@ -49,14 +49,12 @@ public class Promotion {
      * represents the manufacture date
      */
     @Column(name = "manufacture_date")
-    @FutureOrPresent(message = PROMOTION_DATE_FUTURE_OR_PRESENT)
     private LocalDate manufactureDate;
 
     /**
      * represents the expiration date
      */
     @Column(name = "expire_date")
-    @FutureOrPresent(message = PROMOTION_DATE_FUTURE_OR_PRESENT)
     private LocalDate expireDate;
 
     /**

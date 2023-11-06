@@ -35,7 +35,7 @@ public class SearchPromotionDTO {
     /**
      * Represents the before or after date.
      */
-    private Boolean isBeforeManufactureDate = true;
+    private Boolean isBeforeManufactureDate;
 
     /**
      * Represents the manufacture date.
