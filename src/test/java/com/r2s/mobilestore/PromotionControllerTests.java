@@ -75,22 +75,22 @@ public class PromotionControllerTests {
         customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1,"ABC123","great",0,
-                        LocalDate.now(),expireDate,10.0,9000,
-                        9000,"pending",customerGroup),
-                new Promotion(2,"ABC456","great",0,
-                        LocalDate.now(),expireDate,10.0,9000,
-                        9000,"pending",customerGroup)
+                new Promotion(1, "ABC123", "great", 0,
+                        LocalDate.now(), expireDate, 10.0, 9000,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        LocalDate.now(), expireDate, 10.0, 9000,
+                        9000, "pending", customerGroup)
         );
 
         Answer<Void> updateExpirePromotionStatusAnswer = invocation -> {
             List<Promotion> promotionListUpdate = Arrays.asList(
-                    new Promotion(1,"ABC123","great",0,
-                            LocalDate.now(),expireDate,10.0,9000,
-                            9000,"expire",customerGroup),
-                    new Promotion(2,"ABC456","great",0,
-                            LocalDate.now(),expireDate,10.0,9000,
-                            9000,"expire",customerGroup)
+                    new Promotion(1, "ABC123", "great", 0,
+                            LocalDate.now(), expireDate, 10.0, 9000,
+                            9000, "expire", customerGroup),
+                    new Promotion(2, "ABC456", "great", 0,
+                            LocalDate.now(), expireDate, 10.0, 9000,
+                            9000, "expire", customerGroup)
             );
             when(promotionRepository.findByExpireDate(LocalDate.now())).thenReturn(promotionListUpdate);
             return null;
@@ -113,22 +113,22 @@ public class PromotionControllerTests {
         customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1,"ABC123","great",0,
-                        manufactureDay,LocalDate.now().plusDays(1),10.0,9000,
-                        9000,"pending",customerGroup),
-                new Promotion(2,"ABC456","great",0,
-                        manufactureDay,LocalDate.now().plusDays(1),10.0,9000,
-                        9000,"pending",customerGroup)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDay, LocalDate.now().plusDays(1), 10.0, 9000,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDay, LocalDate.now().plusDays(1), 10.0, 9000,
+                        9000, "pending", customerGroup)
         );
 
         Answer<Void> updateActivatePromotionStatusAnswer = invocation -> {
             List<Promotion> promotionListUpdate = Arrays.asList(
-                    new Promotion(1,"ABC123","great",0,
-                            manufactureDay,LocalDate.now().plusDays(1),10.0,9000,
-                            9000,"activate",customerGroup),
-                    new Promotion(2,"ABC456","great",0,
-                            manufactureDay,LocalDate.now().plusDays(1),10.0,9000,
-                            9000,"activate",customerGroup)
+                    new Promotion(1, "ABC123", "great", 0,
+                            manufactureDay, LocalDate.now().plusDays(1), 10.0, 9000,
+                            9000, "activate", customerGroup),
+                    new Promotion(2, "ABC456", "great", 0,
+                            manufactureDay, LocalDate.now().plusDays(1), 10.0, 9000,
+                            9000, "activate", customerGroup)
             );
             when(promotionRepository.findByManufactureDate(LocalDate.now())).thenReturn(promotionListUpdate);
             return null;
@@ -150,9 +150,9 @@ public class PromotionControllerTests {
         customerGroup.add("vip");
         customerGroup.add("diamond");
 
-        Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,9000,
-                9000,"pending",customerGroup);
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, 9000,
+                9000, "pending", customerGroup);
 
         mockMvc.perform(post(endpoint).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(promotion)))
@@ -171,9 +171,9 @@ public class PromotionControllerTests {
         customerGroup.add("vip");
         customerGroup.add("diamond");
 
-        Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,9000,
-                9000,"pending",customerGroup);
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, 9000,
+                9000, "pending", customerGroup);
 
         mockMvc.perform(post(endpoint).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(promotion)))
@@ -193,9 +193,9 @@ public class PromotionControllerTests {
         customerGroup.add("vip");
         customerGroup.add("diamond");
 
-        Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,null,
-                9000,"pending",customerGroup);
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, null,
+                9000, "pending", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
 
@@ -241,23 +241,23 @@ public class PromotionControllerTests {
         customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1,"ABC123","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending",customerGroup),
-                new Promotion(2,"ABC456","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending",customerGroup)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
         PageDTO pageDTO = new PageDTO();
 
-        when(promotionService.listFollowByStatus("pending",pageDTO)).thenReturn(promotions);
+        when(promotionService.listFollowByStatus("pending", pageDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint)
                         .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(pageDTO))
-                                .param("status", "pending"))
+                        .content(objectMapper.writeValueAsString(pageDTO))
+                        .param("status", "pending"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andDo(print());
@@ -276,20 +276,20 @@ public class PromotionControllerTests {
         customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1,"ABC123","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending",customerGroup),
-                new Promotion(2,"ABC456","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending",customerGroup)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
         PageDTO pageDTO = new PageDTO();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC","pending","Vip",
-                true,manufactureDate,"equal",0,pageDTO);
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC", "pending", "Vip",
+                true, manufactureDate, "equal", 0, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -312,20 +312,20 @@ public class PromotionControllerTests {
         customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1,"ABC123","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending",customerGroup),
-                new Promotion(2,"ABC456","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending",customerGroup)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
         PageDTO pageDTO = new PageDTO();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC123","pending","Vip",
-                null,null,"equal",0,pageDTO);
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC123", "pending", "Vip",
+                null, null, "equal", 0, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -348,20 +348,20 @@ public class PromotionControllerTests {
         customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1,"ABC123","great",0,
-                        manufactureDate,expireDate,10.0,9000,
-                        9000,"pending",customerGroup),
-                new Promotion(2,"ABC456","great",0,
-                        manufactureDate,expireDate,10.0,9000,
-                        9000,"pending",customerGroup)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, 9000,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, 9000,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
         PageDTO pageDTO = new PageDTO();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC123","pending","Vip",
-                true,manufactureDate,null,null,pageDTO);
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC123", "pending", "Vip",
+                true, manufactureDate, null, null, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -384,20 +384,20 @@ public class PromotionControllerTests {
         customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1,"ABC123","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending",customerGroup),
-                new Promotion(2,"ABC456","great",0,
-                        manufactureDate,expireDate,10.0,null,
-                        9000,"pending",customerGroup)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
         PageDTO pageDTO = new PageDTO();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC123","pending","Vip",
-                null,null,null,null,pageDTO);
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC123", "pending", "Vip",
+                null, null, null, null, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -420,8 +420,8 @@ public class PromotionControllerTests {
 
         LocalDate manufactureDate = LocalDate.now();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC","pending","Vip",
-                true,manufactureDate,"equal",0,pageDTO);
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC", "pending", "Vip",
+                true, manufactureDate, "equal", 0, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -443,12 +443,12 @@ public class PromotionControllerTests {
         customerGroup.add("vip");
         customerGroup.add("diamond");
 
-        Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,9000,
-                9000,"pending",customerGroup);
-        Promotion updatePromotion = new Promotion(1,"XYZ456","great",0,
-                manufactureDate,expireDate,20.0,9000,
-                9000,"activated",customerGroup);
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, 9000,
+                9000, "pending", customerGroup);
+        Promotion updatePromotion = new Promotion(1, "XYZ456", "great", 0,
+                manufactureDate, expireDate, 20.0, 9000,
+                9000, "activated", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
         when(promotionService.save(any(Promotion.class))).thenReturn(updatePromotion);
@@ -477,12 +477,12 @@ public class PromotionControllerTests {
         customerGroup.add("vip");
         customerGroup.add("diamond");
 
-        Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,9000,
-                9000,"pending",customerGroup);
-        Promotion updatePromotion = new Promotion(1,"XYZ456","great",0,
-                manufactureDate,expireDate,20.0,9000,
-                9000,"activated",customerGroup);
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, 9000,
+                9000, "pending", customerGroup);
+        Promotion updatePromotion = new Promotion(1, "XYZ456", "great", 0,
+                manufactureDate, expireDate, 20.0, 9000,
+                9000, "activated", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
         when(promotionService.save(any(Promotion.class))).thenReturn(updatePromotion);
@@ -506,9 +506,9 @@ public class PromotionControllerTests {
         customerGroup.add("vip");
         customerGroup.add("diamond");
 
-        Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,null,
-                9000,"pending",customerGroup);
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, null,
+                9000, "pending", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
 
@@ -530,9 +530,9 @@ public class PromotionControllerTests {
         customerGroup.add("vip");
         customerGroup.add("diamond");
 
-        Promotion promotion = new Promotion(1,"ABC123","great",0,
-                manufactureDate,expireDate,10.0,null,
-                9000,"pending",customerGroup);
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, null,
+                9000, "pending", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
 

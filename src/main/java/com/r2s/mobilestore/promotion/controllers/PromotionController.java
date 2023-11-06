@@ -114,6 +114,7 @@ public class PromotionController {
     @PostMapping()
     public ResponseEntity<?> createPromotion(@RequestBody @Valid Promotion promotion) {
         try {
+            LocalDate now = LocalDate.now();
             // Check discount code existence
             if (promotionService.checkForExistence(promotion.getDiscountCode()) == false) {
 
