@@ -31,6 +31,7 @@ category: /categories
 ##====== ADD 2023/10/03 xuanmai START ======#
 promotion: /promotions
 product: /products
+manufacturer: /manufacturers
 LOG_PATH: r2s-mobile-store-api-oct.23/src/main/upload/images/product_images/
 ALLOWED_CHARACTERS: 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
 LENGTH_OF_DISCOUNT_CODE_PROMOTION: 8
@@ -39,7 +40,7 @@ ACTIVATE: activated
 NOT_ACTIVATE: not-activated
 PENDING: pending
 EXPIRE: expire
-##====== ADD 2023/11/01 xuanmai END ======#
+##====== ADD 2023/11/07 xuanmai END ======#
 
 # JWT RSA key pair
 jwt:

@@ -46,7 +46,7 @@ public interface CategoryService {
     /**
      * This method is used to delete a category by id
      *
-     * @param category This is category
+     * @param id This is category id
      */
     public void delete(long id);
 }

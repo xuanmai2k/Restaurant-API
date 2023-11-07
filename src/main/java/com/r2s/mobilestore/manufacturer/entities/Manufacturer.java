@@ -1,13 +1,13 @@
-package com.r2s.mobilestore.product.entities;
+package com.r2s.mobilestore.manufacturer.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Represents a product
+ * Represents a manufacturer
  *
  * @author xuanmai
- * @since 2023-10-12
+ * @since 2023-11-07
  */
 @Data
 @Entity
@@ -28,4 +28,5 @@ public class Manufacturer {
      */
     @Column(name = "name", nullable = false, unique = true)
     private String manufacturerName;
+
 }
