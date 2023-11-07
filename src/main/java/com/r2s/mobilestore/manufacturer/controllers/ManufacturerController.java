@@ -83,7 +83,7 @@ public class ManufacturerController {
                 return new ResponseEntity<>(body, HttpStatus.CREATED);
             }
 
-            // Duplicate discount code
+            // Duplicate manufacturerName
             body.setResponse(Response.Key.STATUS, Response.Value.DUPLICATED);
             return new ResponseEntity<>(body, HttpStatus.CONFLICT);
         } catch (Exception ex) {
@@ -142,9 +142,11 @@ public class ManufacturerController {
             // Found
             if (updateManufacturer.isPresent()) {
 
+                // Update
                 Manufacturer _manufacturer = updateManufacturer.get();
                 _manufacturer.setManufacturerName(manufacturer.getManufacturerName());
 
+                // Successful
                 return new ResponseEntity<>(manufacturerService.save(_manufacturer), HttpStatus.OK);
             }
 
@@ -170,8 +172,21 @@ public class ManufacturerController {
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteManufacturer(@PathVariable long id) {
         try {
-            manufacturerService.delete(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            Optional<Manufacturer> updateManufacturer = manufacturerService.getManufacturerById(id);
+
+            // Found
+            if (updateManufacturer.isPresent()) {
+
+                // Delete
+                manufacturerService.delete(id);
+
+                //Successful
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+
+            // Not found
+            body.setResponse(Response.Key.STATUS, Response.Value.NOT_FOUND);
+            return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             logger.info(ex.getMessage());
 

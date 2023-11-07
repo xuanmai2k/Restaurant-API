@@ -31,7 +31,7 @@ public class PromotionServiceImpl implements PromotionService {
     private PromotionRepository promotionRepository;
 
     @Value("${ALLOWED_CHARACTERS}")
-    private String allowedCharacters;
+    private String ALLOWED_CHARACTERS;
 
     @Value("${ACTIVATE}")
     private String ACTIVATE;
@@ -97,8 +97,8 @@ public class PromotionServiceImpl implements PromotionService {
 
         do {
             for (int i = 0; i < length; i++) {
-                int randomIndex = random.nextInt(allowedCharacters.length());
-                sb.append(allowedCharacters.charAt(randomIndex));
+                int randomIndex = random.nextInt(ALLOWED_CHARACTERS.length());
+                sb.append(ALLOWED_CHARACTERS.charAt(randomIndex));
             }
             discountCode = sb.toString();
 

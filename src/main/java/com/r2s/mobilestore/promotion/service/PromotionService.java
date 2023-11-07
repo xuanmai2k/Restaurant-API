@@ -25,7 +25,7 @@ public interface PromotionService {
     public Page<Promotion> listFollowByStatus(String status, PageDTO pageDTO);
 
     /**
-     * Find promotion by keyword
+     * This method is used to find promotion by keyword
      *
      * @param searchPromotionDTO This is keyword
      * @return List of promotions
@@ -65,6 +65,7 @@ public interface PromotionService {
      * This method is used to check discount code existence
      *
      * @param discountCode This is discount code
+     * @return boolean
      */
     public Boolean checkForExistence(String discountCode);
 
