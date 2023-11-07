@@ -2,11 +2,15 @@ package com.r2s.mobilestore;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.r2s.mobilestore.promotion.dtos.PageDTO;
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
+import com.r2s.mobilestore.promotion.repositories.PromotionRepository;
 import com.r2s.mobilestore.promotion.service.PromotionService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,8 +29,7 @@ import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,9 +46,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ExtendWith(MockitoExtension.class)
 public class PromotionControllerTests {
     @MockBean
     private PromotionService promotionService;
+
+    @MockBean
+    private PromotionRepository promotionRepository;
 
     @Autowired
     protected MockMvc mockMvc;
@@ -60,12 +67,92 @@ public class PromotionControllerTests {
     private String getEndpoint;
 
     @Test
+    public void testUpdateExpireStatus() {
+
+        LocalDate expireDate = LocalDate.now().plusDays(1);
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
+        List<Promotion> promotionList = Arrays.asList(
+                new Promotion(1, "ABC123", "great", 0,
+                        LocalDate.now(), expireDate, 10.0, 9000,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        LocalDate.now(), expireDate, 10.0, 9000,
+                        9000, "pending", customerGroup)
+        );
+
+        Answer<Void> updateExpirePromotionStatusAnswer = invocation -> {
+            List<Promotion> promotionListUpdate = Arrays.asList(
+                    new Promotion(1, "ABC123", "great", 0,
+                            LocalDate.now(), expireDate, 10.0, 9000,
+                            9000, "expire", customerGroup),
+                    new Promotion(2, "ABC456", "great", 0,
+                            LocalDate.now(), expireDate, 10.0, 9000,
+                            9000, "expire", customerGroup)
+            );
+            when(promotionRepository.findByExpireDate(LocalDate.now())).thenReturn(promotionListUpdate);
+            return null;
+        };
+
+        doAnswer(updateExpirePromotionStatusAnswer).when(promotionService).updateExpirePromotionStatus();
+        promotionService.updateExpirePromotionStatus();
+        // Verify that the updateExpirePromotionStatus() method was called once
+        verify(promotionService).updateExpirePromotionStatus();
+    }
+
+
+    @Test
+    public void testUpdateActivateStatus() {
+
+        LocalDate manufactureDay = LocalDate.now();
+
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
+        List<Promotion> promotionList = Arrays.asList(
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDay, LocalDate.now().plusDays(1), 10.0, 9000,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDay, LocalDate.now().plusDays(1), 10.0, 9000,
+                        9000, "pending", customerGroup)
+        );
+
+        Answer<Void> updateActivatePromotionStatusAnswer = invocation -> {
+            List<Promotion> promotionListUpdate = Arrays.asList(
+                    new Promotion(1, "ABC123", "great", 0,
+                            manufactureDay, LocalDate.now().plusDays(1), 10.0, 9000,
+                            9000, "activate", customerGroup),
+                    new Promotion(2, "ABC456", "great", 0,
+                            manufactureDay, LocalDate.now().plusDays(1), 10.0, 9000,
+                            9000, "activate", customerGroup)
+            );
+            when(promotionRepository.findByManufactureDate(LocalDate.now())).thenReturn(promotionListUpdate);
+            return null;
+        };
+
+        doAnswer(updateActivatePromotionStatusAnswer).when(promotionService).updateActivatePromotionStatus();
+        promotionService.updateActivatePromotionStatus();
+        // Verify that the updateExpirePromotionStatus() method was called once
+        verify(promotionService).updateActivatePromotionStatus();
+    }
+
+    @Test
     @WithMockUser(authorities = "ROLE_ADMIN")
     void shouldCreatePromotion() throws Exception {
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
 
-        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
-                expireDate, "junit test", true);
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, 9000,
+                9000, "pending", customerGroup);
 
         mockMvc.perform(post(endpoint).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(promotion)))
@@ -77,10 +164,16 @@ public class PromotionControllerTests {
     @Test
     @WithMockUser(authorities = "ROLE_USER")
     void shouldCreatePromotionForbidden() throws Exception {
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
 
-        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
-                expireDate, "junit test", true);
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, 9000,
+                9000, "pending", customerGroup);
 
         mockMvc.perform(post(endpoint).contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(promotion)))
@@ -93,9 +186,16 @@ public class PromotionControllerTests {
     @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnPromotionById() throws Exception {
         Long id = 1L;
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
-        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
-                expireDate, "junit test", true);
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
+
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, null,
+                9000, "pending", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
 
@@ -117,27 +217,47 @@ public class PromotionControllerTests {
                 .andDo(print());
     }
 
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
+    void shouldGenerateDiscountCode() throws Exception {
+
+        String randomCode = "ABC";
+
+        when(promotionService.getRandomDiscountCode(8)).thenReturn(randomCode);
+        mockMvc.perform(post(endpoint + "/generate-code"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnPageOfPromotions() throws Exception {
 
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
+
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1, "999abc", 1000, 35.0, 100,
-                        expireDate, "junit test", true),
-                new Promotion(2, "888abc", 2000, 40.0, 200,
-                        expireDate, "junit test", true)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
-        when(promotionService.listAll(pageDTO)).thenReturn(promotions);
-        mockMvc.perform(get(endpoint).contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(pageDTO)))
+        when(promotionService.listFollowByStatus("pending", pageDTO)).thenReturn(promotions);
+        mockMvc.perform(get(endpoint)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(pageDTO))
+                        .param("status", "pending"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", hasSize(2)))
                 .andDo(print());
@@ -148,21 +268,28 @@ public class PromotionControllerTests {
     @WithMockUser(authorities = "ROLE_USER")
     void shouldReturnPageOfPromotionUsingFullFilter() throws Exception {
 
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
+
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1, "999abc", 1000, 35.0, 100,
-                        expireDate, "junit test", true),
-                new Promotion(2, "888abc", 2000, 40.0, 200,
-                        expireDate, "junit test", true)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", expireDate,
-                true, 0, 100, pageDTO);
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC", "pending", "Vip",
+                true, manufactureDate, "equal", 0, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -175,23 +302,30 @@ public class PromotionControllerTests {
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
-    void shouldReturnPageOfPromotionUsingFilterWithoutExpireDate() throws Exception {
+    void shouldReturnPageOfPromotionUsingFilterWithoutManufactureDate() throws Exception {
 
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
+
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1, "999abc", 1000, 35.0, 100,
-                        expireDate, "junit test", true),
-                new Promotion(2, "888abc", 2000, 40.0, 200,
-                        expireDate, "junit test", true)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
-                true, 0, 100, pageDTO);
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC123", "pending", "Vip",
+                null, null, "equal", 0, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -204,23 +338,30 @@ public class PromotionControllerTests {
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
-    void shouldReturnPageOfPromotionUsingFilterWithoutDiscountAvailable() throws Exception {
+    void shouldReturnPageOfPromotionUsingFilterWithoutUsed() throws Exception {
 
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
+
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1, "999abc", 1000, 35.0, 100,
-                        expireDate, "junit test", true),
-                new Promotion(2, "888abc", 2000, 40.0, 200,
-                        expireDate, "junit test", true)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, 9000,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, 9000,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", expireDate,
-                null, 0, 100, pageDTO);
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC123", "pending", "Vip",
+                true, manufactureDate, null, null, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -233,23 +374,30 @@ public class PromotionControllerTests {
 
     @Test
     @WithMockUser(authorities = "ROLE_USER")
-    void shouldReturnPageOfPromotionUsingFilterWithoutDiscountAvailableAndExpireDate() throws Exception {
+    void shouldReturnPageOfPromotionUsingFilterWithoutManufactureDateAndUsed() throws Exception {
 
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
+
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
 
         List<Promotion> promotionList = Arrays.asList(
-                new Promotion(1, "999abc", 1000, 35.0, 100,
-                        expireDate, "junit test", true),
-                new Promotion(2, "888abc", 2000, 40.0, 200,
-                        expireDate, "junit test", false)
+                new Promotion(1, "ABC123", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup),
+                new Promotion(2, "ABC456", "great", 0,
+                        manufactureDate, expireDate, 10.0, null,
+                        9000, "pending", customerGroup)
         );
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
-                null, 0, 100, pageDTO);
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC123", "pending", "Vip",
+                null, null, null, null, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -268,10 +416,12 @@ public class PromotionControllerTests {
 
         Page<Promotion> promotions = new PageImpl<>(promotionList);
 
-        PageDTO pageDTO = new PageDTO(0, 2);
+        PageDTO pageDTO = new PageDTO();
 
-        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("abc", null,
-                null, 0, 100, pageDTO);
+        LocalDate manufactureDate = LocalDate.now();
+
+        SearchPromotionDTO searchPromotionDTO = new SearchPromotionDTO("ABC", "pending", "Vip",
+                true, manufactureDate, "equal", 0, pageDTO);
 
         when(promotionService.search(searchPromotionDTO)).thenReturn(promotions);
         mockMvc.perform(get(endpoint + "/search").contentType(MediaType.APPLICATION_JSON)
@@ -286,12 +436,19 @@ public class PromotionControllerTests {
     void shouldUpdatePromotion() throws Exception {
         Long id = 1L;
 
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
 
-        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
-                expireDate, "junit test", true);
-        Promotion updatePromotion = new Promotion(2, "888abc", 2000, 40.0, 200,
-                expireDate, "junit test", false);
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, 9000,
+                9000, "pending", customerGroup);
+        Promotion updatePromotion = new Promotion(1, "XYZ456", "great", 0,
+                manufactureDate, expireDate, 20.0, 9000,
+                9000, "activated", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
         when(promotionService.save(any(Promotion.class))).thenReturn(updatePromotion);
@@ -301,9 +458,9 @@ public class PromotionControllerTests {
                         .content(objectMapper.writeValueAsString(updatePromotion)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.discountCode").value(updatePromotion.getDiscountCode()))
-                .andExpect(jsonPath("$.totalPurchase").value(updatePromotion.getTotalPurchase()))
-                .andExpect(jsonPath("$.discount").value(updatePromotion.getDiscount()))
-                .andExpect(jsonPath("$.maxPromotionGet").value(updatePromotion.getMaxPromotionGet()))
+                .andExpect(jsonPath("$.status").value(updatePromotion.getStatus()))
+                .andExpect(jsonPath("$.customerGroup").value(updatePromotion.getCustomerGroup()))
+                .andExpect(jsonPath("$.percentageDiscount").value(updatePromotion.getPercentageDiscount()))
                 .andDo(print());
     }
 
@@ -313,12 +470,19 @@ public class PromotionControllerTests {
     void shouldUpdatePromotionForbidden() throws Exception {
         Long id = 1L;
 
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
 
-        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
-                expireDate, "junit test", true);
-        Promotion updatePromotion = new Promotion(2, "888abc", 2000, 40.0, 200,
-                expireDate, "junit test", false);
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, 9000,
+                9000, "pending", customerGroup);
+        Promotion updatePromotion = new Promotion(1, "XYZ456", "great", 0,
+                manufactureDate, expireDate, 20.0, 9000,
+                9000, "activated", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
         when(promotionService.save(any(Promotion.class))).thenReturn(updatePromotion);
@@ -335,10 +499,16 @@ public class PromotionControllerTests {
     @WithMockUser(authorities = "ROLE_ADMIN")
     void shouldDeletePromotion() throws Exception {
         Long id = 1L;
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
 
-        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
-                expireDate, "junit test", true);
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, null,
+                9000, "pending", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
 
@@ -353,10 +523,16 @@ public class PromotionControllerTests {
     @WithMockUser(authorities = "ROLE_USER")
     void shouldDeletePromotionForbidden() throws Exception {
         Long id = 1L;
-        LocalDate expireDate = LocalDate.parse("2023-12-12");
+        LocalDate manufactureDate = LocalDate.now();
+        LocalDate expireDate = LocalDate.now().plusDays(1);
 
-        Promotion promotion = new Promotion(1, "999abc", 1000, 35.0, 100,
-                expireDate, "junit test", true);
+        List<String> customerGroup = new ArrayList<>();
+        customerGroup.add("vip");
+        customerGroup.add("diamond");
+
+        Promotion promotion = new Promotion(1, "ABC123", "great", 0,
+                manufactureDate, expireDate, 10.0, null,
+                9000, "pending", customerGroup);
 
         when(promotionService.getPromotionById(id)).thenReturn(Optional.of(promotion));
 

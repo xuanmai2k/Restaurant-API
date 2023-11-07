@@ -1,6 +1,6 @@
 package com.r2s.mobilestore.promotion.service;
 
-import com.r2s.mobilestore.promotion.dtos.PageDTO;
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import org.springframework.data.domain.Page;
@@ -18,10 +18,11 @@ public interface PromotionService {
     /**
      * This method is used to list all promotions
      *
+     * @param status  This is a status of promotion
      * @param pageDTO This is a page
      * @return list all of promotions
      */
-    public Page<Promotion> listAll(PageDTO pageDTO);
+    public Page<Promotion> listFollowByStatus(String status, PageDTO pageDTO);
 
     /**
      * Find promotion by keyword
@@ -49,7 +50,7 @@ public interface PromotionService {
     /**
      * This method is used to delete a promotion by id
      *
-     * @param id This is promotion
+     * @param id This is promotion id
      */
     public void delete(Long id);
 
@@ -59,4 +60,22 @@ public interface PromotionService {
      * @param length This is length of discount code
      */
     public String getRandomDiscountCode(Integer length);
+
+    /**
+     * This method is used to check discount code existence
+     *
+     * @param discountCode This is discount code
+     */
+    public Boolean checkForExistence(String discountCode);
+
+    /**
+     * This method is used to update activate status of promotion
+     */
+    public void updateActivatePromotionStatus();
+
+    /**
+     * This method is used to update expire status of promotion
+     */
+    public void updateExpirePromotionStatus();
+
 }

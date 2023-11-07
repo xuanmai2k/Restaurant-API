@@ -1,5 +1,6 @@
 package com.r2s.mobilestore.promotion.dtos;
 
+import com.r2s.mobilestore.dtos.PageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,24 +23,34 @@ public class SearchPromotionDTO {
     private String discountCode = "";
 
     /**
-     * Represents the expiration date.
+     * Represents the status of promotion.
      */
-    private LocalDate expireDate;
+    private String status = "";
 
     /**
-     * Represents discount available
+     * Represents customer group
      */
-    private Boolean discountAvailable = null;
+    private String customerGroup = "";
 
     /**
-     * Represents min discount
+     * Represents the before or after date.
      */
-    private Integer minDiscount = 0;
+    private Boolean isBeforeManufactureDate;
 
     /**
-     * Represents max discount
+     * Represents the manufacture date.
      */
-    private Integer maxDiscount = 100;
+    private LocalDate manufactureDate;
+
+    /**
+     * Represents the calculation of used.
+     */
+    private String compareUsed;
+
+    /**
+     * Represents the client used
+     */
+    private Integer used;
 
     /**
      * Represents page

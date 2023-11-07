@@ -1,12 +1,13 @@
 package com.r2s.mobilestore.product.controllers;
 
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
-import com.r2s.mobilestore.product.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.SearchProductDTO;
 import com.r2s.mobilestore.product.entities.Product;
 import com.r2s.mobilestore.product.services.ProductService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +110,7 @@ public class ProductController {
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping
-    public ResponseEntity<?> createProduct(@ModelAttribute CreateProductDTO createProductDTO) throws IOException {
+    public ResponseEntity<?> createProduct(@ModelAttribute @Valid CreateProductDTO createProductDTO) throws IOException {
         try {
             Product product = productService.createProduct(createProductDTO);
 
@@ -134,7 +135,7 @@ public class ProductController {
      */
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long id, @ModelAttribute CreateProductDTO createProductDTO) {
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @ModelAttribute @Valid CreateProductDTO createProductDTO) {
         try {
             Optional<Product> product = productService.getProductById(id);
 

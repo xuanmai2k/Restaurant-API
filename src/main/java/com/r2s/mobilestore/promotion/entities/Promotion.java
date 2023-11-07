@@ -1,13 +1,13 @@
 package com.r2s.mobilestore.promotion.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import static com.r2s.mobilestore.utils.Constants.*;
 
 /**
  * Represents a promotion
@@ -31,47 +31,71 @@ public class Promotion {
      * Represents the discount code.
      */
     @Column(name = "discount_code", nullable = false, unique = true)
+    @Size(min = 0, max = 26, message = PROMOTION_CODE_MAX_MIN_CHARACTER)
     private String discountCode;
-
-    /**
-     * Represents the minimum order value to add a voucher
-     */
-    @Column(name = "total_purchase", nullable = false)
-    private Integer totalPurchase;
-
-    /**
-     * Represents the percentage discount
-     */
-    @Column(name = "discount", nullable = false)
-    @Min(value = 0, message = "Max promotion get must be a non-negative number")
-    @Max(value = 100, message = "Max promotion get must not exceed 100")
-    private Double discount;
-
-    /**
-     * represents the maximum amount of reduction
-     */
-    @Column(name = "maximum_promotion_get", nullable = false)
-    @Min(value = 0, message = "Max promotion get must be a non-negative number")
-    private Integer maxPromotionGet;
-
-    /**
-     * represents the expiration date
-     */
-    @Column(name = "expire_date", nullable = false)
-    @Future(message = "Expire date must be in the future")
-    private LocalDate expireDate;
 
     /**
      * Represents description's discount
      */
-    @Column(name = "campaign_description", nullable = false)
-    @Size(min = 1, max = 1000, message = "Must be from 1 to 1000 characters")
+    @Column(name = "campaign_description")
+    @Size(min = 1, max = 2000, message = PROMOTION_MAX_MIN_CHARACTERS)
     private String campaignDescription;
 
+
+    @Column(name = "used")
+    private Integer used = 0;
+
     /**
-     * Represents discount available
+     * represents the manufacture date
      */
-    @Column(name = "discount_available", nullable = false)
-    private Boolean discountAvailable = true;
+    @Column(name = "manufacture_date")
+    private LocalDate manufactureDate;
+
+    /**
+     * represents the expiration date
+     */
+    @Column(name = "expire_date")
+    private LocalDate expireDate;
+
+    /**
+     * Represents the percentage discount
+     */
+    @Column(name = "percentage_discount")
+    @Min(value = 1, message = PERCENTAGE_PROMOTION)
+    @Max(value = 100, message = PERCENTAGE_PROMOTION)
+    @NotNull(message = NOT_REQUIRE)
+    private Double percentageDiscount;
+
+    /**
+     * Represents the maximum price discount
+     */
+    @Column(name = "maximum_price_discount")
+    @Min(value = 1, message = MAXIMUM_PRICE_DISCOUNT)
+    @Max(value = 999999, message = MAXIMUM_PRICE_DISCOUNT)
+    @NotNull(message = NOT_REQUIRE)
+    private Integer maximumPriceDiscount;
+
+    /**
+     * Represents the minimum order value to add a voucher
+     */
+    @Column(name = "minimum_order_value")
+    @Min(value = 0, message = MINIMUM_ORDER_VALUE_PROMOTION)
+    @Max(value = 999999, message = MINIMUM_ORDER_VALUE_PROMOTION)
+    @NotNull(message = NOT_REQUIRE)
+    private Integer minimumOrderValue;
+
+    /**
+     * Represents the status promotion
+     */
+    @Column(name = "status")
+    private String status;
+
+    /**
+     * Represents the product’s images via product_images table.
+     */
+    @ElementCollection
+    @CollectionTable(name = "customer_group_promotion", joinColumns = @JoinColumn(name = "promotion_id"))
+    @Column(name = "name_customer_group")
+    private List<String> customerGroup;
 
 }

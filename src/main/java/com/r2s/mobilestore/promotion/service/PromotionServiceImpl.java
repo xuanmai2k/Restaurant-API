@@ -1,6 +1,6 @@
 package com.r2s.mobilestore.promotion.service;
 
-import com.r2s.mobilestore.promotion.dtos.PageDTO;
+import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.promotion.dtos.SearchPromotionDTO;
 import com.r2s.mobilestore.promotion.entities.Promotion;
 import com.r2s.mobilestore.promotion.repositories.PromotionRepository;
@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,6 +25,7 @@ import java.util.Optional;
  */
 @Service
 @Transactional
+@Component
 public class PromotionServiceImpl implements PromotionService {
     @Autowired
     private PromotionRepository promotionRepository;
@@ -29,32 +33,22 @@ public class PromotionServiceImpl implements PromotionService {
     @Value("${ALLOWED_CHARACTERS}")
     private String allowedCharacters;
 
+    @Value("${ACTIVATE}")
+    private String ACTIVATE;
+
+    @Value("${EXPIRE}")
+    private String EXPIRE;
+
     /**
-     * This method is used to list all promotions
+     * This method is used to list promotions follow by status
      *
+     * @param status  This is a status of promotion
      * @param pageDTO This is a page
      * @return list all of promotions
      */
     @Override
-    public Page<Promotion> listAll(PageDTO pageDTO) {
-        return promotionRepository.findAll(PageRequest.of(pageDTO.getPageNumber(), pageDTO.getPageSize()));
-    }
-
-    /**
-     * Get all promotions containing discount code
-     *
-     * @param searchPromotionDTO This is keyword
-     * @return List of promotions
-     */
-    @Override
-    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO) {
-        return promotionRepository.searchPromotion(
-                searchPromotionDTO.getDiscountCode(),
-                searchPromotionDTO.getExpireDate(),
-                searchPromotionDTO.getDiscountAvailable(),
-                searchPromotionDTO.getMinDiscount(),
-                searchPromotionDTO.getMaxDiscount(),
-                PageRequest.of(searchPromotionDTO.getPageDTO().getPageNumber(), searchPromotionDTO.getPageDTO().getPageSize()));
+    public Page<Promotion> listFollowByStatus(String status, PageDTO pageDTO) {
+        return promotionRepository.searchPromotionByStatus(status, PageRequest.of(pageDTO.getPageNumber(), pageDTO.getPageSize()));
     }
 
     /**
@@ -91,7 +85,7 @@ public class PromotionServiceImpl implements PromotionService {
     /**
      * This method is used to random discount code
      *
-     * @param length This is promotion id
+     * @param length This is the length of promotion
      */
     @Override
     public String getRandomDiscountCode(Integer length) {
@@ -118,7 +112,58 @@ public class PromotionServiceImpl implements PromotionService {
      *
      * @param discountCode This is discount code
      */
+    @Override
     public Boolean checkForExistence(String discountCode) {
         return promotionRepository.existsByDiscountCode(discountCode);
     }
+
+    /**
+     * Get all promotions containing discount code
+     *
+     * @param searchPromotionDTO This is keyword
+     * @return List of promotions
+     */
+    @Override
+    public Page<Promotion> search(SearchPromotionDTO searchPromotionDTO) {
+        return promotionRepository.searchPromotion(
+                searchPromotionDTO.getDiscountCode(),
+                searchPromotionDTO.getCustomerGroup(),
+                searchPromotionDTO.getStatus(),
+                searchPromotionDTO.getIsBeforeManufactureDate(),
+                searchPromotionDTO.getManufactureDate(),
+                searchPromotionDTO.getCompareUsed(),
+                searchPromotionDTO.getUsed(),
+                PageRequest.of(searchPromotionDTO.getPageDTO().getPageNumber(), searchPromotionDTO.getPageDTO().getPageSize()));
+    }
+
+    /**
+     * Get all promotions which manufactureDay is today to change the status
+     */
+    @Override
+    public void updateActivatePromotionStatus() {
+        LocalDate currentDate = LocalDate.now();
+
+        List<Promotion> promotions = promotionRepository.findByManufactureDate(currentDate);
+
+        for (Promotion promotion : promotions) {
+            promotion.setStatus(ACTIVATE);
+            save(promotion);
+        }
+    }
+
+    /**
+     * Get all promotions which expireDay is today to change the status
+     */
+    @Override
+    public void updateExpirePromotionStatus() {
+        LocalDate currentDate = LocalDate.now();
+
+        List<Promotion> promotions = promotionRepository.findByExpireDate(currentDate);
+
+        for (Promotion promotion : promotions) {
+            promotion.setStatus(EXPIRE);
+            save(promotion);
+        }
+    }
+
 }

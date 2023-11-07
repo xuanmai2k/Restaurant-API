@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Represents a promotion repository
@@ -20,19 +21,40 @@ import java.time.LocalDate;
 @Repository
 public interface PromotionRepository extends JpaRepository<Promotion, Long> {
 
-    @Query("SELECT p FROM Promotion p " +
+    @Query("SELECT p FROM Promotion p JOIN p.customerGroup cg " +
             "WHERE " +
             "(:discountCode = '' OR p.discountCode LIKE %:discountCode% ) " +
-            "AND (p.discountAvailable = :discountAvailable OR :discountAvailable IS NULL) " +
-            "AND (p.expireDate = :expireDate OR :expireDate IS NULL) " +
-            "AND (p.discount >= :minDiscount OR :minDiscount IS NULL) " +
-            "AND (p.discount <= :maxDiscount OR :maxDiscount IS NULL)")
+            "AND (cg LIKE %:customerGroup% OR :customerGroup IS NULL ) " +
+            "AND (p.status LIKE %:status% OR :status IS NULL ) " +
+            "AND ((" +
+            "(:isBeforeManufactureDate = true AND (p.manufactureDate <= :manufactureDate OR :manufactureDate IS NULL)) " +
+            "OR (:isBeforeManufactureDate = false AND (p.manufactureDate >= :manufactureDate OR :manufactureDate IS NULL))) " +
+            "OR (:isBeforeManufactureDate IS NULL AND :manufactureDate IS NULL)) " +
+            "AND ((" +
+            "(:compareUsed = 'less' AND (p.used >= :used OR :used IS NULL)) " +
+            "OR (:compareUsed = 'more' AND (p.used <= :used OR :used IS NULL)) " +
+            "OR (:compareUsed = 'equal' AND (p.used = :used OR :used IS NULL)) " +
+            "OR (:compareUsed = 'other' AND (p.used != :used OR :used IS NULL))) " +
+            "OR (:compareUsed IS NULL AND :used IS NULL)) ")
     Page<Promotion> searchPromotion(@Param("discountCode") String discountCode,
-                                    @Param("expireDate") LocalDate expireDate,
-                                    @Param("discountAvailable") Boolean discountAvailable,
-                                    @Param("minDiscount") Integer minDiscount,
-                                    @Param("maxDiscount") Integer maxDiscount,
+                                    @Param("customerGroup") String customerGroup,
+                                    @Param("status") String status,
+                                    @Param("isBeforeManufactureDate") Boolean isBeforeManufactureDate,
+                                    @Param("manufactureDate") LocalDate manufactureDate,
+                                    @Param("compareUsed") String compareUsed,
+                                    @Param("used") Integer used,
                                     Pageable pageable);
 
+    @Query("SELECT p FROM Promotion p " +
+            "WHERE " +
+            "(:status = '' OR p.status LIKE %:status% )")
+    Page<Promotion> searchPromotionByStatus(@Param("status") String status,
+                                            Pageable pageable);
+
     boolean existsByDiscountCode(String discountCode);
+
+    List<Promotion> findByManufactureDate(LocalDate currentDate);
+
+    List<Promotion> findByExpireDate(LocalDate currentDate);
+
 }
