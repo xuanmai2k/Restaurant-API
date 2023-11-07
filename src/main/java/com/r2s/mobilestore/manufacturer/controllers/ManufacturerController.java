@@ -39,7 +39,7 @@ public class ManufacturerController {
      * REST API methods for Retrieval operations
      *
      * @param pageDTO This is a page
-     * @return list all of promotions
+     * @return list all of manufacturers
      */
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping
