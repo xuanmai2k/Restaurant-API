@@ -15,9 +15,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "manufacturers", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name"})
-})
+@Table(name = "manufacturers")
 public class Manufacturer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +24,7 @@ public class Manufacturer {
     /**
      * Represents the manufacturer’s name.
      */
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "manufacturer_name", nullable = false, unique = true)
     private String manufacturerName;
 
 }

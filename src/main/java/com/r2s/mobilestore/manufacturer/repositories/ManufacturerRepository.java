@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 /**
  * Represents a manufacturer repository
@@ -17,7 +19,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ManufacturerRepository extends JpaRepository<Manufacturer, Long> {
 
-//    List<Manufacturer> findByManufacturerNameContaining(String manufacturerName);
+    List<Manufacturer> findByManufacturerNameContaining(String manufacturerName);
 
     Page<Manufacturer> findByManufacturerNameContaining(String manufacturerName, PageRequest pageDTO);
 
