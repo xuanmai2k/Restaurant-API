@@ -12,8 +12,8 @@ import java.util.List;
 @Data
 public class CreateProductDTO {
     private String productName;
-    private String category;
-    private String manufacturer;
+    private Long category;
+    private Long manufacturer;
     private String productCondition;
     private String description;
     private List<String> capacityList;

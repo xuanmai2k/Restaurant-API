@@ -19,8 +19,6 @@ import java.util.List;
 @Repository
 public interface ManufacturerRepository extends JpaRepository<Manufacturer, Long> {
 
-    List<Manufacturer> findByManufacturerNameContaining(String manufacturerName);
-
     Page<Manufacturer> findByManufacturerNameContaining(String manufacturerName, PageRequest pageDTO);
 
     boolean existsByManufacturerName(String manufacturerName);
