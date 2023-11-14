@@ -2,6 +2,7 @@ package com.r2s.mobilestore.product.services;
 
 import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.CreatePropertyDetailDTO;
 import com.r2s.mobilestore.product.entities.Product;
 import com.r2s.mobilestore.product.entities.Property;
 import org.springframework.data.domain.Page;
@@ -18,4 +19,6 @@ public interface ProductService {
     Page<Product> getAllProducts(PageDTO pageDTO);
 
     Optional<Product> getProductById(Long id);
+
+    void updateProperty(Property property);
 }

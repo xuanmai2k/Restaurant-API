@@ -6,6 +6,7 @@ import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.manufacturer.entities.Manufacturer;
 import com.r2s.mobilestore.manufacturer.repositories.ManufacturerRepository;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.CreatePropertyDetailDTO;
 import com.r2s.mobilestore.product.entities.Product;
 import com.r2s.mobilestore.product.entities.Property;
 import com.r2s.mobilestore.product.repositories.ProductRepository;
@@ -192,13 +193,30 @@ public class ProductServiceImpl implements ProductService {
                         //random product code
                         property.setProductCode(getRandomProductCode(LENGTH_OF_PRODUCT_CODE));
 
-                        propertyRepository.save(property);
-                        propertyList.add(property);
+                        Property savedItem = propertyRepository.save(property);
+                        propertyList.add(savedItem);
                     }
                 }
             }
         }
         return propertyList;
+    }
+
+    @Override
+    public void updateProperty(Property property) {
+        Optional<Property> updateProperty = propertyRepository.findById(property.getId());
+
+        Property _property = updateProperty.get();
+        _property.setCapacity(property.getCapacity());
+        _property.setColor(property.getColor());
+        _property.setConfiguration(property.getConfiguration());
+        _property.setConnectionSupport(property.getConnectionSupport());
+        _property.setCapitalPrice(property.getCapitalPrice());
+        _property.setPrice(property.getPrice());
+        _property.setPreferentialPrice(property.getPreferentialPrice());
+        _property.setQuantity(property.getQuantity());
+
+        propertyRepository.save(_property);
     }
 
     @Override

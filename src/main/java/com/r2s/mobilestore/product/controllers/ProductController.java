@@ -4,8 +4,10 @@ import com.r2s.mobilestore.dtos.PageDTO;
 import com.r2s.mobilestore.dtos.ResponseDTO;
 import com.r2s.mobilestore.enums.Response;
 import com.r2s.mobilestore.product.dtos.CreateProductDTO;
+import com.r2s.mobilestore.product.dtos.CreatePropertyDetailDTO;
 import com.r2s.mobilestore.product.entities.Product;
 import com.r2s.mobilestore.product.entities.Property;
+import com.r2s.mobilestore.product.repositories.PropertyRepository;
 import com.r2s.mobilestore.product.services.ProductService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -27,6 +29,9 @@ import java.util.Optional;
 public class ProductController {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private PropertyRepository propertyRepository;
 
     private final ResponseDTO body = ResponseDTO.getInstance();
 
@@ -51,6 +56,35 @@ public class ProductController {
             return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/property")
+    public ResponseEntity<?> createPropertyDetail(@RequestBody CreatePropertyDetailDTO createPropertyDetailDTO) throws IOException {
+        try {
+
+            for (Property item : createPropertyDetailDTO.getPropertyList()){
+                Optional<Property> property = propertyRepository.findById(item.getId());
+
+                if (property.isPresent()){
+                    productService.updateProperty(item);
+                }else{
+                    continue;
+                }
+            }
+
+            //Successfully
+            body.setResponse(Response.Key.STATUS, Response.Value.SUCCESSFULLY);
+            return new ResponseEntity<>(body, HttpStatus.CREATED);
+        } catch (Exception ex) {
+            logger.info(ex.getMessage());
+
+            //Failed
+            body.setResponse(Response.Key.STATUS, Response.Value.FAILURE);
+            return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping()
